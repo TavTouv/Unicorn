@@ -842,7 +842,7 @@
           <div class="vit-cadre-inner">
             <div class="vit-eventail"></div>
             <div class="vit-kicker" id="vitrine-kicker">- Établi clandestinement en 1987 -</div>
-            <h1 style="font-size:44px;line-height:1.3;margin:0;color:var(--vit-texte);">Le secret le mieux<br>gardé de <span style="color:var(--vit-or);">Los Santos</span></h1>
+            <h1 style="font-size:44px;line-height:1.3;margin:0;color:var(--vit-texte);">La nuit n'a jamais<br>brillé <span style="color:var(--vit-or);">aussi fort</span></h1>
             <div class="vit-diviseur-etoile">✦</div>
             <div id="vitrine-slogan" class="small" style="font-size:17px;max-width:440px;margin:0 auto;"></div>
           </div>
@@ -2133,7 +2133,7 @@
               <div><div class="settings-row-label">Thème principal</div><div class="small">Appliqué par défaut à qui n'a pas choisi le sien.</div></div>
               <select id="master-theme-defaut" style="width:auto;">
                 <option value="unicorn">Unicorn</option>
-                <option value="leopolds">Leopold's</option>
+                <option value="leopolds">Unicorn Gold</option>
                 <option value="toutoule">Toutoule</option>
                 <option value="sandystrip">Sandy Strip</option>
                 <option value="clair">Clair</option>
@@ -2817,7 +2817,7 @@
   <div id="loading-overlay">
     <div class="loading-spinner-wrap">
       <div class="loading-spinner"></div>
-      <div class="loading-monogram" id="loading-monogram">L</div>
+      <div class="loading-monogram" id="loading-monogram">U</div>
     </div>
     <div class="small mt10" id="loading-text">Chargement...</div>
   </div>
@@ -3003,7 +3003,7 @@
         'dashboard.hideLeaderboard': 'Masquer le classement', 'dashboard.showLeaderboard': 'Afficher le classement',
         'settings.menuPosition': 'Position du menu', 'settings.theme': 'Thème', 'settings.language': 'Langue',
         'settings.left': 'Gauche', 'settings.right': 'Droite',
-        'theme.unicorn': 'Unicorn', 'theme.leopolds': "Leopold's", 'theme.clair': 'Clair', 'theme.sandystrip': 'Sandy Strip', 'theme.toutoule': 'Toutoule',
+        'theme.unicorn': 'Unicorn', 'theme.leopolds': 'Unicorn Gold', 'theme.clair': 'Clair', 'theme.sandystrip': 'Sandy Strip', 'theme.toutoule': 'Toutoule',
         'lang.fr': 'Français', 'lang.en': 'English', 'lang.es': 'Español', 'lang.it': 'Italiano',
         'login.identifiant': 'Identifiant', 'login.password': 'Mot de passe',
         'login.remember': 'Enregistrer mon identifiant', 'login.enter': 'Entrer'
@@ -3018,7 +3018,7 @@
         'dashboard.hideLeaderboard': 'Hide leaderboard', 'dashboard.showLeaderboard': 'Show leaderboard',
         'settings.menuPosition': 'Menu position', 'settings.theme': 'Theme', 'settings.language': 'Language',
         'settings.left': 'Left', 'settings.right': 'Right',
-        'theme.unicorn': 'Unicorn', 'theme.leopolds': "Leopold's", 'theme.clair': 'Light', 'theme.sandystrip': 'Sandy Strip', 'theme.toutoule': 'Toutoule',
+        'theme.unicorn': 'Unicorn', 'theme.leopolds': 'Unicorn Gold', 'theme.clair': 'Light', 'theme.sandystrip': 'Sandy Strip', 'theme.toutoule': 'Toutoule',
         'lang.fr': 'Français', 'lang.en': 'English', 'lang.es': 'Español', 'lang.it': 'Italiano',
         'login.identifiant': 'Username', 'login.password': 'Password',
         'login.remember': 'Remember my username', 'login.enter': 'Enter'
@@ -3033,7 +3033,7 @@
         'dashboard.hideLeaderboard': 'Ocultar clasificación', 'dashboard.showLeaderboard': 'Mostrar clasificación',
         'settings.menuPosition': 'Posición del menú', 'settings.theme': 'Tema', 'settings.language': 'Idioma',
         'settings.left': 'Izquierda', 'settings.right': 'Derecha',
-        'theme.unicorn': 'Unicorn', 'theme.leopolds': "Leopold's", 'theme.clair': 'Claro', 'theme.sandystrip': 'Sandy Strip', 'theme.toutoule': 'Toutoule',
+        'theme.unicorn': 'Unicorn', 'theme.leopolds': 'Unicorn Gold', 'theme.clair': 'Claro', 'theme.sandystrip': 'Sandy Strip', 'theme.toutoule': 'Toutoule',
         'lang.fr': 'Français', 'lang.en': 'English', 'lang.es': 'Español', 'lang.it': 'Italiano',
         'login.identifiant': 'Usuario', 'login.password': 'Contraseña',
         'login.remember': 'Recordar mi usuario', 'login.enter': 'Entrar'
@@ -3048,7 +3048,7 @@
         'dashboard.hideLeaderboard': 'Nascondi classifica', 'dashboard.showLeaderboard': 'Mostra classifica',
         'settings.menuPosition': 'Posizione del menu', 'settings.theme': 'Tema', 'settings.language': 'Lingua',
         'settings.left': 'Sinistra', 'settings.right': 'Destra',
-        'theme.unicorn': 'Unicorn', 'theme.leopolds': "Leopold's", 'theme.clair': 'Chiaro', 'theme.sandystrip': 'Sandy Strip', 'theme.toutoule': 'Toutoule',
+        'theme.unicorn': 'Unicorn', 'theme.leopolds': 'Unicorn Gold', 'theme.clair': 'Chiaro', 'theme.sandystrip': 'Sandy Strip', 'theme.toutoule': 'Toutoule',
         'lang.fr': 'Français', 'lang.en': 'English', 'lang.es': 'Español', 'lang.it': 'Italiano',
         'login.identifiant': 'Nome utente', 'login.password': 'Password',
         'login.remember': 'Ricorda il mio nome utente', 'login.enter': 'Entra'
@@ -3543,8 +3543,6 @@
 
     function onDataLoaded(data) {
       DATA = data;
-      const monogramme = document.getElementById('loading-monogram');
-      if (monogramme) monogramme.textContent = ((data.nomEntreprise || 'L').trim()[0] || 'L').toUpperCase();
       if (data.faviconVitrine) {
         const lienFavicon = document.getElementById('favicon-lien');
         if (lienFavicon) lienFavicon.href = data.faviconVitrine;
