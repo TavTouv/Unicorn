@@ -6,22 +6,22 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Leopold's">
-  <meta name="theme-color" content="#0a0705">
+  <meta name="apple-mobile-web-app-title" content="Unicorn">
+  <meta name="theme-color" content="#08060f">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Playfair+Display:wght@600;700;800&family=VT323&family=Bebas+Neue&family=Manrope:wght@500;700;800&family=Cinzel:wght@500;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Press+Start+2P&display=swap" rel="stylesheet">
-  <title>Leopold's Lounge Bar</title>
-  <link id="favicon-lien" rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230d0a06'/%3E%3Ctext x='32' y='45' font-family='Georgia,serif' font-size='36' font-weight='700' fill='%23c9a961' text-anchor='middle'%3EL%3C/text%3E%3C/svg%3E">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Playfair+Display:wght@600;700;800&family=VT323&family=Bebas+Neue&family=Manrope:wght@500;700;800&family=Cinzel:wght@500;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <title>Unicorn</title>
+  <link id="favicon-lien" rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f3e6c4'/%3E%3Cstop offset='.5' stop-color='%23d9c2ff'/%3E%3Cstop offset='1' stop-color='%238ed6e6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='%2308060f'/%3E%3Cpath d='M32 7 L42 50 H22 Z' fill='url(%23g)'/%3E%3Cpath d='M25.5 38 L40 31 M23.8 45 L41.6 37.5 M28 29.5 L38 25 M30 21 L35 18.8' stroke='%2308060f' stroke-width='2.2' stroke-linecap='round' fill='none'/%3E%3Crect x='18' y='50' width='28' height='4' rx='2' fill='%23ecd7a6'/%3E%3C/svg%3E">
   <base target="_top">
   <script>
     try {
-      var __savedTheme = localStorage.getItem('sandystrip_theme');
+      var __savedTheme = localStorage.getItem('unicorn_theme');
 
       if (__savedTheme === 'sombre' || __savedTheme === 'minuit' || __savedTheme === 'pixelar') {
-        __savedTheme = 'leopolds';
-        localStorage.setItem('sandystrip_theme', __savedTheme);
+        __savedTheme = 'unicorn';
+        localStorage.setItem('unicorn_theme', __savedTheme);
       }
-      if (__savedTheme) document.documentElement.setAttribute('data-theme', __savedTheme);
+      document.documentElement.setAttribute('data-theme', __savedTheme || 'unicorn');
     } catch (e) {  }
   </script>
   <script>
@@ -33,8 +33,11 @@
         || (typeof google !== 'undefined' && google.script && google.script.run);
       if (estDansAppsScript) return; 
 
-      var URL_API_APPS_SCRIPT = localStorage.getItem('sandystrip_api_url') ||
-        'https://script.google.com/macros/s/1dz-HfNkGpWaouWDAaQ4CSW7gh1LmoJ4vCxwtUD-jMIY';
+      // ============ CONFIGURATION UNICORN ============
+      // Colle ici l'URL de TON déploiement Apps Script (celle qui finit par /exec).
+      var URL_API_APPS_SCRIPT = localStorage.getItem('unicorn_api_url') ||
+        'https://script.google.com/macros/s/AKfycbwulZkiy50aInPxj8N__-8zjaCZi5VyOutnFDFfotAPsptDtmBZqIj_Sm7FU7Cyj4K1/exec';
+      // ===============================================
 
       function construireChaineAppel(succesFn, echecFn) {
         return new Proxy({}, {
@@ -45,6 +48,10 @@
             
             return function () {
               var args = Array.prototype.slice.call(arguments);
+              if (URL_API_APPS_SCRIPT.indexOf('COLLE_ICI') !== -1) {
+                if (echecFn) echecFn(new Error("Le back-end n'est pas configuré : ouvre index.html et remplace COLLE_ICI_L_URL_DE_TON_DEPLOIEMENT_APPS_SCRIPT par l'URL /exec de ton Apps Script."));
+                return;
+              }
               fetch(URL_API_APPS_SCRIPT, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
@@ -213,6 +220,90 @@
     }
     [data-theme="leopolds"] .ms-sidebar-item.active { padding-left: 8px; }
     [data-theme="leopolds"] nav button.active { background: var(--pink); color: #16110a; }
+
+    /* ===== Thème Unicorn : velours nuit, nacre et champagne =====
+       Une seule extravagance : le logo, qui se nacre en irisé à l'ouverture. Le reste reste
+       sobre pour que les chiffres de la nuit gardent la vedette. */
+    [data-theme="unicorn"] {
+      --bg: #08060f; --bg-panel: #0e0b1a; --bg-card: #151128; --bg-card2: #1c1733;
+      --border: #35294f; --border-soft: #241c3a;
+      --text: #f4eff9; --text-mute: #aea2c8; --text-faint: #7b7096;
+      --pink: #cdb2ff; --pink-deep: #8f6ae0;
+      --gold: #ecd7a6; --cyan: #8ed6e6;
+      --green: #6fd6a8; --red: #e2587a;
+      --anim-duree: .28s; --anim-easing: cubic-bezier(.22, .8, .3, 1);
+    }
+    [data-theme="unicorn"] body {
+      background-image:
+        radial-gradient(ellipse at 12% -5%, rgba(143,106,224,.16), transparent 52%),
+        radial-gradient(ellipse at 95% 105%, rgba(236,215,166,.06), transparent 46%);
+      background-attachment: fixed;
+    }
+    [data-theme="unicorn"] h1, [data-theme="unicorn"] h2, [data-theme="unicorn"] h3 {
+      font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 700; letter-spacing: .2px;
+    }
+    [data-theme="unicorn"] .brand {
+      font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 700;
+      letter-spacing: .24em; text-transform: uppercase;
+      background: linear-gradient(100deg, #f3e6c4 0%, #e6d3ff 26%, #a9e0ee 50%, #f3e6c4 74%, #e6d3ff 100%);
+      background-size: 220% 100%;
+      -webkit-background-clip: text; background-clip: text;
+      color: transparent; -webkit-text-fill-color: transparent;
+      animation: unicorn-nacre 2.6s cubic-bezier(.22, .8, .3, 1) 1 both;
+    }
+    @keyframes unicorn-nacre { from { background-position: 100% 0; } to { background-position: 0 0; } }
+    @media (prefers-reduced-motion: reduce) { [data-theme="unicorn"] .brand { animation: none; } }
+    body.animations-reduites[data-theme="unicorn"] .brand, [data-theme="unicorn"] body.animations-reduites .brand { animation: none; }
+
+    [data-theme="unicorn"] .kpi-label, [data-theme="unicorn"] th, [data-theme="unicorn"] .filter-btn, [data-theme="unicorn"] .settings-row-label {
+      letter-spacing: .6px; font-weight: 600;
+    }
+    [data-theme="unicorn"] .kpi-value {
+      font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 700;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    [data-theme="unicorn"] .card:has(.kpi-value) {
+      box-shadow: inset 0 1px 0 rgba(236,215,166,.38), 0 10px 30px rgba(0,0,0,.4);
+    }
+    [data-theme="unicorn"] .btn-primary {
+      background: linear-gradient(135deg, #ebdfff 0%, #b79bf2 55%, #8f6ae0 100%);
+      color: #130d24; font-weight: 700; text-shadow: none;
+    }
+    [data-theme="unicorn"] .btn-gold {
+      background: linear-gradient(135deg, #f6ebcb, #d9bd7f); color: #1a1408; font-weight: 700; text-shadow: none;
+    }
+    [data-theme="unicorn"] .btn-ghost { background: var(--bg-card2); border: 1px solid var(--border); color: var(--text); }
+    [data-theme="unicorn"] .btn-ghost:hover { border-color: var(--pink); color: var(--pink); }
+    [data-theme="unicorn"] .btn-danger { background: linear-gradient(135deg, var(--red), #8a2a45); color: #fff0f4; font-weight: 700; }
+    [data-theme="unicorn"] a.linklike { background: var(--bg-card2); border-color: var(--border); color: var(--pink); }
+    [data-theme="unicorn"] a.linklike:hover { border-color: var(--gold); color: var(--gold); background: var(--bg-card); }
+    [data-theme="unicorn"] .ms-sidebar-item:not(.active), [data-theme="unicorn"] #nav-items button:not(.active) {
+      color: var(--text-mute); font-weight: 500;
+    }
+    [data-theme="unicorn"] #app-shell.pos-left nav button.active, [data-theme="unicorn"] #app-shell.pos-right nav button.active,
+    [data-theme="unicorn"] .ms-sidebar-item.active {
+      background: rgba(205,178,255,.09); color: var(--pink);
+      border-left: 3px solid var(--gold); border-radius: 0 6px 6px 0;
+    }
+    [data-theme="unicorn"] .ms-sidebar-item.active { padding-left: 8px; }
+    [data-theme="unicorn"] nav button.active { background: var(--pink); color: #130d24; }
+    /* L'écran de connexion de base a un néon avec text-shadow : on le remplace par la nacre. */
+    [data-theme="unicorn"] .brand, [data-theme="unicorn"] #login-screen .brand { text-shadow: none; }
+    [data-theme="unicorn"] #login-screen .brand {
+      font-size: 38px; letter-spacing: .26em;
+      background: linear-gradient(100deg, #f3e6c4 0%, #e6d3ff 26%, #a9e0ee 50%, #f3e6c4 74%, #e6d3ff 100%);
+      background-size: 220% 100%; -webkit-background-clip: text; background-clip: text;
+      color: transparent; -webkit-text-fill-color: transparent;
+      animation: unicorn-nacre 2.6s cubic-bezier(.22, .8, .3, 1) 1 both;
+    }
+    @media (prefers-reduced-motion: reduce) { [data-theme="unicorn"] #login-screen .brand { animation: none; } }
+    [data-theme="unicorn"] .eye-btn { color: var(--text-mute); }
+    [data-theme="unicorn"] .login-marquee span { color: var(--gold); text-shadow: none; }
+    [data-theme="unicorn"] #vitrine-publique {
+      --vit-bg: #0b0816; --vit-bg2: #120e22; --vit-or: #d9c28a; --vit-or-vif: #ecd7a6;
+      --vit-brun: #3f3263; --vit-brun-clair: #6b5aa0; --vit-texte: #efe8f8; --vit-texte-mute: #a99cc6;
+    }
+    [data-theme="unicorn"] :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
     * { box-sizing: border-box; }
     
     body { user-select: none; -webkit-user-select: none; }
@@ -738,7 +829,7 @@
   <div id="vitrine-publique" class="hidden">
     <div class="vitrine-header-fixe">
       <div class="vitrine-header-contenu">
-        <div class="brand" id="vitrine-brand" style="font-size:24px;">LEOPOLD'S LOUNGE BAR</div>
+        <div class="brand" id="vitrine-brand" style="font-size:24px;">UNICORN</div>
         <div class="flex" id="vitrine-nav-liens" style="align-items:center;"></div>
         <div id="vitrine-header-action"><button class="btn-primary" onclick="ouvrirEcranConnexion()">Se connecter</button></div>
       </div>
@@ -853,6 +944,7 @@
           <input id="moncompte-telephone" placeholder="Ex: 555-0192">
           <button class="btn-primary btn-block mt16" onclick="enregistrerTelephoneClientUI()">Enregistrer</button>
           <div class="err" id="moncompte-telephone-err"></div>
+          <button class="btn-ghost btn-block mt16" id="btn-changer-mdp-client" onclick="ouvrirChangementMdpClient(false)">Changer mon mot de passe</button>
         </div>
       </div>
 
@@ -866,7 +958,7 @@
   <div id="login-screen" class="modal-overlay hidden">
     <div class="modal-card" style="max-width:380px;text-align:center;">
       <div class="flex-between mb10" style="text-align:left;">
-        <div class="brand" id="brand-login" style="font-size:22px;">LEOPOLD'S LOUNGE BAR</div>
+        <div class="brand" id="brand-login" style="font-size:22px;">UNICORN</div>
         <button class="btn-ghost" id="login-fermer-btn" onclick="fermerModaleConnexion()">✕</button>
       </div>
       <div class="login-marquee hidden" id="login-slogan-wrap"><span id="login-slogan"></span></div>
@@ -874,7 +966,7 @@
       <div style="text-align:left;">
       <div id="login-normal">
         <label data-i18n="login.identifiant">Identifiant</label>
-        <input id="login-identifiant" placeholder="prenom.nom@pixelar.rp" autocomplete="username">
+        <input id="login-identifiant" placeholder="prenom.nom" autocomplete="username">
         <div class="mt10">
           <label data-i18n="login.password">Mot de passe</label>
           <div class="password-wrap">
@@ -910,7 +1002,7 @@
         <label>Ton nom</label>
         <input id="boot-nom">
         <label class="mt10">Identifiant souhaité</label>
-        <input id="boot-identifiant" placeholder="prenom.nom@pixelar.rp">
+        <input id="boot-identifiant" placeholder="prenom.nom">
         <label class="mt10">Mot de passe</label>
         <input id="boot-pwd" type="password">
         <button class="btn-primary btn-block" onclick="doBootstrap()">Créer mon compte Propriétaire</button>
@@ -922,7 +1014,7 @@
 
   <div id="app">
     <header>
-      <div class="brand" style="font-size:20px;"><span id="brand-header" onclick="clicLogoEasterEgg()" style="cursor:pointer;user-select:none;">LEOPOLD'S LOUNGE BAR</span></div>
+      <div class="brand" style="font-size:20px;"><span id="brand-header" onclick="clicLogoEasterEgg()" style="cursor:pointer;user-select:none;">UNICORN</span></div>
       <div class="flex" style="align-items:center;gap:16px;">
         <div class="notif-bell" onclick="toggleNotifPanel()" title="Notifications">
           🔔<span class="notif-badge hidden" id="notif-badge">0</span>
@@ -1267,8 +1359,8 @@
             <div id="sp-form-body" class="hidden mt16">
               <div class="small mb10">L'identifiant et le mot de passe se génèrent automatiquement dès que tu tapes le nom - modifiables si besoin. Tu pourras les communiquer au joueur concerné plus tard.</div>
               <div class="grid grid-4">
-                <div><label>Nom</label><input id="sp-nom" placeholder="Vélasco" oninput="genererIdentifiantEtMdpEmploye_()"></div>
-                <div><label>Prénom</label><input id="sp-prenom" placeholder="Vincent" oninput="genererIdentifiantEtMdpEmploye_()"></div>
+                <div><label>Nom</label><input id="sp-nom" placeholder="Nom" oninput="genererIdentifiantEtMdpEmploye_()"></div>
+                <div><label>Prénom</label><input id="sp-prenom" placeholder="Prénom" oninput="genererIdentifiantEtMdpEmploye_()"></div>
                 <div><label>Identifiant</label><input id="sp-identifiant" placeholder="Se génère avec le nom..."></div>
                 <div><label>Mot de passe</label>
                   <div class="password-wrap"><input id="sp-motdepasse" type="password" placeholder="Se génère avec le nom...">
@@ -1368,7 +1460,7 @@
             <div class="ms-groupe-corps">
             <div class="small mb10">Pas besoin de nom/prénom - le compte s'appelle automatiquement "Fisc". Donne juste un identifiant et un mot de passe à la personne concernée.</div>
             <div class="grid grid-2">
-              <div><label>Identifiant</label><input id="fisc-identifiant" placeholder="fisc@pixelar.rp"></div>
+              <div><label>Identifiant</label><input id="fisc-identifiant" placeholder="fisc"></div>
               <div><label>Mot de passe</label>
                 <div class="password-wrap"><input id="fisc-motdepasse" type="password" placeholder="Mot de passe">
                 <button type="button" class="eye-btn" onclick="togglePasswordVisibility('fisc-motdepasse', this)">Afficher</button></div>
@@ -1477,7 +1569,7 @@
               <h2>Ajouter un contrat</h2>
               <div class="small mb10">Photo ou scan du contrat de travail (image ou PDF). Stocké dans un dossier Google Drive dédié, accessible en permanence via le lien.</div>
               <div class="grid grid-2">
-                <div><label>Concerné (nom de l'employé)</label><input id="contrat-concerne" placeholder="Ex: Vincent Vélasco"></div>
+                <div><label>Concerné (nom de l'employé)</label><input id="contrat-concerne" placeholder="Ex: Prénom Nom"></div>
                 <div><label>Fichier</label><input id="contrat-fichier" type="file" accept="image/*,.pdf"></div>
               </div>
               <label class="mt10">Description</label>
@@ -1684,7 +1776,7 @@
         <div id="gc-sub-comptes-clients">
           <div class="card mb10">
             <h2>Créer un compte client</h2>
-            <div class="small mb10">L'identifiant ET le mot de passe se génèrent tout seuls - tu n'as jamais à choisir ni à connaître le mot de passe du client, il te sera juste montré une fois pour le lui transmettre.</div>
+            <div class="small mb10">L'identifiant et un mot de passe <b>provisoire</b> se génèrent tout seuls. Le client choisira son propre mot de passe dès sa première connexion : personne d'autre ne le connaîtra.</div>
             <div class="grid grid-2">
               <div><label>Nom</label><input id="cc-nom" placeholder="Nom de famille" oninput="previsualiserIdentifiantClientUI()"></div>
               <div><label>Prénom</label><input id="cc-prenom" placeholder="Prénom" oninput="previsualiserIdentifiantClientUI()"></div>
@@ -2004,7 +2096,7 @@
             </div>
             <div class="settings-row">
               <div><div class="settings-row-label">Info publique (vitrine)</div><div class="small">Adresse, contact, réseaux - affiché sur la page publique, avant toute connexion. Vide = section masquée.</div></div>
-              <textarea id="master-info-publique" rows="2" maxlength="500" placeholder="Ex: 123 rue du Vice, Los Santos - Discord: leopolds.rp" style="width:220px;"></textarea>
+              <textarea id="master-info-publique" rows="2" maxlength="500" placeholder="Ex: 123 rue du Vice, Los Santos - Discord: unicorn.rp" style="width:220px;"></textarea>
             </div>
             <div class="settings-row">
               <div><div class="settings-row-label">À propos (vitrine)</div><div class="small">L'histoire du lieu, le concept - page dédiée sur la vitrine publique.</div></div>
@@ -2022,7 +2114,7 @@
             </div>
             <div class="settings-row">
               <div><div class="settings-row-label">Nom de l'entreprise</div><div class="small">Affiché partout (titre, connexion, en-tête).</div></div>
-              <input id="master-nom-entreprise" placeholder="Ex: Sandy Strip" style="width:220px;">
+              <input id="master-nom-entreprise" placeholder="Ex: Unicorn" style="width:220px;">
             </div>
             <div class="settings-row">
               <div><div class="settings-row-label">Slogan</div><div class="small">Sous le nom, sur l'écran de connexion.</div></div>
@@ -2040,6 +2132,7 @@
             <div class="settings-row">
               <div><div class="settings-row-label">Thème principal</div><div class="small">Appliqué par défaut à qui n'a pas choisi le sien.</div></div>
               <select id="master-theme-defaut" style="width:auto;">
+                <option value="unicorn">Unicorn</option>
                 <option value="leopolds">Leopold's</option>
                 <option value="toutoule">Toutoule</option>
                 <option value="sandystrip">Sandy Strip</option>
@@ -2349,6 +2442,24 @@
       <button class="btn-danger btn-block mt16" onclick="confirmerRaisonRefus()">Confirmer le refus</button>
       <button class="btn-ghost btn-block mt10" onclick="document.getElementById('raison-refus-modal').classList.add('hidden')">Annuler</button>
       <div class="err" id="raison-refus-err"></div>
+    </div>
+  </div>
+
+  <div id="mdp-client-modal" class="modal-overlay hidden">
+    <div class="modal-card" style="max-width:380px;">
+      <div class="flex-between mb10">
+        <h2 id="mdp-client-titre" style="margin:0;">Changer mon mot de passe</h2>
+        <button class="btn-ghost" id="mdp-client-fermer" onclick="fermerChangementMdpClient()">✕</button>
+      </div>
+      <div class="small mb10" id="mdp-client-intro"></div>
+      <label>Mot de passe actuel</label>
+      <input id="mdp-client-ancien" type="password" autocomplete="current-password">
+      <label class="mt10">Nouveau mot de passe <span class="small">(6 caractères minimum)</span></label>
+      <input id="mdp-client-nouveau" type="password" autocomplete="new-password">
+      <label class="mt10">Confirmer le nouveau mot de passe</label>
+      <input id="mdp-client-confirmation" type="password" autocomplete="new-password">
+      <button class="btn-primary btn-block mt16" onclick="validerChangementMdpClient()">Enregistrer</button>
+      <div class="err" id="mdp-client-err"></div>
     </div>
   </div>
 
@@ -2839,12 +2950,12 @@
       // identifiants mémorisés devenus invalides), on ne veut surtout pas recharger en boucle à
       // l'infini - après quelques tentatives rapprochées, on laisse la personne agir manuellement.
       let tentatives = 0;
-      try { tentatives = Number(sessionStorage.getItem('sandystrip_reload_session_expiree') || '0'); } catch (e) {  }
+      try { tentatives = Number(sessionStorage.getItem('unicorn_reload_session_expiree') || '0'); } catch (e) {  }
       if (tentatives >= 3) {
         showToast('Ta session a expiré et la reconnexion automatique échoue - reconnecte-toi manuellement.', true);
         return;
       }
-      try { sessionStorage.setItem('sandystrip_reload_session_expiree', String(tentatives + 1)); } catch (e) {  }
+      try { sessionStorage.setItem('unicorn_reload_session_expiree', String(tentatives + 1)); } catch (e) {  }
       showToast('Ta session a expiré - reconnexion...', true);
       setTimeout(function () { location.reload(); }, 1500);
     }
@@ -2892,7 +3003,7 @@
         'dashboard.hideLeaderboard': 'Masquer le classement', 'dashboard.showLeaderboard': 'Afficher le classement',
         'settings.menuPosition': 'Position du menu', 'settings.theme': 'Thème', 'settings.language': 'Langue',
         'settings.left': 'Gauche', 'settings.right': 'Droite',
-        'theme.leopolds': "Leopold's", 'theme.clair': 'Clair', 'theme.sandystrip': 'Sandy Strip', 'theme.toutoule': 'Toutoule',
+        'theme.unicorn': 'Unicorn', 'theme.leopolds': "Leopold's", 'theme.clair': 'Clair', 'theme.sandystrip': 'Sandy Strip', 'theme.toutoule': 'Toutoule',
         'lang.fr': 'Français', 'lang.en': 'English', 'lang.es': 'Español', 'lang.it': 'Italiano',
         'login.identifiant': 'Identifiant', 'login.password': 'Mot de passe',
         'login.remember': 'Enregistrer mon identifiant', 'login.enter': 'Entrer'
@@ -2907,7 +3018,7 @@
         'dashboard.hideLeaderboard': 'Hide leaderboard', 'dashboard.showLeaderboard': 'Show leaderboard',
         'settings.menuPosition': 'Menu position', 'settings.theme': 'Theme', 'settings.language': 'Language',
         'settings.left': 'Left', 'settings.right': 'Right',
-        'theme.leopolds': "Leopold's", 'theme.clair': 'Light', 'theme.sandystrip': 'Sandy Strip', 'theme.toutoule': 'Toutoule',
+        'theme.unicorn': 'Unicorn', 'theme.leopolds': "Leopold's", 'theme.clair': 'Light', 'theme.sandystrip': 'Sandy Strip', 'theme.toutoule': 'Toutoule',
         'lang.fr': 'Français', 'lang.en': 'English', 'lang.es': 'Español', 'lang.it': 'Italiano',
         'login.identifiant': 'Username', 'login.password': 'Password',
         'login.remember': 'Remember my username', 'login.enter': 'Enter'
@@ -2922,7 +3033,7 @@
         'dashboard.hideLeaderboard': 'Ocultar clasificación', 'dashboard.showLeaderboard': 'Mostrar clasificación',
         'settings.menuPosition': 'Posición del menú', 'settings.theme': 'Tema', 'settings.language': 'Idioma',
         'settings.left': 'Izquierda', 'settings.right': 'Derecha',
-        'theme.leopolds': "Leopold's", 'theme.clair': 'Claro', 'theme.sandystrip': 'Sandy Strip', 'theme.toutoule': 'Toutoule',
+        'theme.unicorn': 'Unicorn', 'theme.leopolds': "Leopold's", 'theme.clair': 'Claro', 'theme.sandystrip': 'Sandy Strip', 'theme.toutoule': 'Toutoule',
         'lang.fr': 'Français', 'lang.en': 'English', 'lang.es': 'Español', 'lang.it': 'Italiano',
         'login.identifiant': 'Usuario', 'login.password': 'Contraseña',
         'login.remember': 'Recordar mi usuario', 'login.enter': 'Entrar'
@@ -2937,14 +3048,14 @@
         'dashboard.hideLeaderboard': 'Nascondi classifica', 'dashboard.showLeaderboard': 'Mostra classifica',
         'settings.menuPosition': 'Posizione del menu', 'settings.theme': 'Tema', 'settings.language': 'Lingua',
         'settings.left': 'Sinistra', 'settings.right': 'Destra',
-        'theme.leopolds': "Leopold's", 'theme.clair': 'Chiaro', 'theme.sandystrip': 'Sandy Strip', 'theme.toutoule': 'Toutoule',
+        'theme.unicorn': 'Unicorn', 'theme.leopolds': "Leopold's", 'theme.clair': 'Chiaro', 'theme.sandystrip': 'Sandy Strip', 'theme.toutoule': 'Toutoule',
         'lang.fr': 'Français', 'lang.en': 'English', 'lang.es': 'Español', 'lang.it': 'Italiano',
         'login.identifiant': 'Nome utente', 'login.password': 'Password',
         'login.remember': 'Ricorda il mio nome utente', 'login.enter': 'Entra'
       }
     };
     let LANG = 'fr';
-    try { LANG = localStorage.getItem('sandystrip_lang') || 'fr'; } catch (e) { LANG = 'fr'; }
+    try { LANG = localStorage.getItem('unicorn_lang') || 'fr'; } catch (e) { LANG = 'fr'; }
     function t(key) {
       return (TRANSLATIONS[LANG] && TRANSLATIONS[LANG][key]) || TRANSLATIONS.fr[key] || key;
     }
@@ -2954,15 +3065,16 @@
     }
     function changerLangue(lang) {
       LANG = lang;
-      setPref_('sandystrip_lang', lang);
+      setPref_('unicorn_lang', lang);
       applyI18n();
       if (CURRENT_USER) renderNav();
       renderParametresLangueBoutons();
     }
 
-    const THEMES = [['leopolds', 'theme.leopolds'], ['sandystrip', 'theme.sandystrip'], ['clair', 'theme.clair'], ['toutoule', 'theme.toutoule']];
+    const THEMES = [['unicorn', 'theme.unicorn'], ['leopolds', 'theme.leopolds'], ['sandystrip', 'theme.sandystrip'], ['clair', 'theme.clair'], ['toutoule', 'theme.toutoule']];
     
     const THEMES_APERCU = {
+      unicorn: { bg: '#08060f', accent: '#cdb2ff', gold: '#ecd7a6', police: "'Cormorant Garamond', Georgia, serif", desc: 'Velours nuit et nacre' },
       leopolds: { bg: '#000000', accent: '#e8b923', gold: '#ffcf40', police: "'Playfair Display', Georgia, serif", desc: 'Cabaret noir et or' },
       sandystrip: { bg: '#17040e', accent: '#ff2d78', gold: '#ffcf4d', police: "'Bebas Neue', sans-serif", desc: 'Néon, club énergique' },
       clair: { bg: '#f4f2f7', accent: '#e01d78', gold: '#b8790c', police: "'Manrope', sans-serif", desc: 'Sobre, lumineux' },
@@ -2970,7 +3082,7 @@
     };
     function appliquerTheme(theme) {
       document.documentElement.setAttribute('data-theme', theme);
-      setPref_('sandystrip_theme', theme);
+      setPref_('unicorn_theme', theme);
       renderParametresThemeBoutons();
       demarrerRepereActionsDangereusesToutoule_();
     }
@@ -2997,7 +3109,7 @@
     function renderParametresThemeBoutons() {
       const el = document.getElementById('profil-theme-cartes');
       if (!el) return;
-      const actuel = getPref_('sandystrip_theme', 'leopolds');
+      const actuel = getPref_('unicorn_theme', 'unicorn');
       el.innerHTML = THEMES.map(function (th) {
         const ap = THEMES_APERCU[th[0]];
         const actif = th[0] === actuel;
@@ -3027,7 +3139,7 @@
 
     function changerPrefSonVente() {
       const actif = document.getElementById('pref-son-vente').checked;
-      setPref_('sandystrip_son_vente', actif ? '1' : '0');
+      setPref_('unicorn_son_vente', actif ? '1' : '0');
       document.getElementById('profil-son-choix-ligne').classList.toggle('hidden', !actif);
       if (actif) jouerSonVente(); 
     }
@@ -3035,39 +3147,39 @@
     function renderProfilSonChoixBoutons() {
       const el = document.getElementById('profil-son-choix-boutons');
       if (!el) return;
-      const actuel = getPref_('sandystrip_son_choix', 'auto');
+      const actuel = getPref_('unicorn_son_choix', 'auto');
       el.innerHTML = CHOIX_SON_DISPONIBLES.map(o =>
         `<button class="filter-btn ${o[0] === actuel ? 'active' : ''}" onclick="choisirSonVente('${o[0]}')">${o[1]}</button>`
       ).join('');
     }
     function choisirSonVente(choix) {
-      setPref_('sandystrip_son_choix', choix);
+      setPref_('unicorn_son_choix', choix);
       renderProfilSonChoixBoutons();
       jouerSonVente(); 
     }
     function changerPrefAnimationsReduites() {
       const actif = document.getElementById('pref-animations-reduites').checked;
-      setPref_('sandystrip_animations_reduites', actif ? '1' : '0');
+      setPref_('unicorn_animations_reduites', actif ? '1' : '0');
       document.body.classList.toggle('animations-reduites', actif);
     }
     const DENSITES_DISPONIBLES = [['confortable', 'Confortable'], ['compact', 'Compact']];
     function renderProfilDensiteBoutons() {
       const el = document.getElementById('profil-densite-boutons');
       if (!el) return;
-      const actuel = getPref_('sandystrip_densite', 'confortable');
+      const actuel = getPref_('unicorn_densite', 'confortable');
       el.innerHTML = DENSITES_DISPONIBLES.map(o =>
         `<button class="filter-btn ${o[0] === actuel ? 'active' : ''}" onclick="choisirDensite('${o[0]}')">${o[1]}</button>`
       ).join('');
     }
     function choisirDensite(densite) {
-      setPref_('sandystrip_densite', densite);
+      setPref_('unicorn_densite', densite);
       document.body.classList.toggle('densite-compacte', densite === 'compact');
       renderProfilDensiteBoutons();
     }
 
     function appliquerPreferencesVisuellesGlobales() {
-      document.body.classList.toggle('densite-compacte', getPref_('sandystrip_densite', 'confortable') === 'compact');
-      document.body.classList.toggle('animations-reduites', getPref_('sandystrip_animations_reduites', '0') === '1');
+      document.body.classList.toggle('densite-compacte', getPref_('unicorn_densite', 'confortable') === 'compact');
+      document.body.classList.toggle('animations-reduites', getPref_('unicorn_animations_reduites', '0') === '1');
     }
 
     function filtrerProfilParametres(query) {
@@ -3109,11 +3221,11 @@
       grave: { type: 'sawtooth', freq: 220, duree: 0.4, volume: 0.15 }
     };
     function jouerSonVente() {
-      if (getPref_('sandystrip_son_vente', '0') !== '1') return;
+      if (getPref_('unicorn_son_vente', '0') !== '1') return;
       try {
-        const choix = getPref_('sandystrip_son_choix', 'auto');
+        const choix = getPref_('unicorn_son_choix', 'auto');
         let reglage = SONS_VENTE_DISPONIBLES[choix];
-        const theme = document.documentElement.getAttribute('data-theme') || 'leopolds';
+        const theme = document.documentElement.getAttribute('data-theme') || 'unicorn';
         if (!reglage) {
           if (theme === 'sandystrip') reglage = { type: 'sawtooth', freq: 660, duree: 0.22, volume: 0.16 };
           else if (theme === 'clair') reglage = { type: 'sine', freq: 1200, duree: 0.1, volume: 0.08 };
@@ -3255,12 +3367,12 @@
     }
 
     function idsNotifVues() {
-      try { return JSON.parse(localStorage.getItem('sandystrip_notifs_vues') || '[]'); } catch (e) { return []; }
+      try { return JSON.parse(localStorage.getItem('unicorn_notifs_vues') || '[]'); } catch (e) { return []; }
     }
     function marquerNotifVue(id) {
       const vues = idsNotifVues();
       if (vues.indexOf(id) === -1) vues.push(id);
-      try { localStorage.setItem('sandystrip_notifs_vues', JSON.stringify(vues.slice(-300))); } catch (e) {}
+      try { localStorage.setItem('unicorn_notifs_vues', JSON.stringify(vues.slice(-300))); } catch (e) {}
     }
     function genererNotifications() {
       if (!CURRENT_USER) return [];
@@ -3424,7 +3536,7 @@
       }).getInitialData();
       applyI18n();
       try {
-        const saved = localStorage.getItem('sandystrip_saved_identifiant');
+        const saved = localStorage.getItem('unicorn_saved_identifiant');
         if (saved) document.getElementById('login-identifiant').value = saved;
       } catch (e) {  }
     };
@@ -3438,7 +3550,7 @@
         if (lienFavicon) lienFavicon.href = data.faviconVitrine;
       }
       try {
-        if (!localStorage.getItem('sandystrip_theme') && data.themeParDefaut) {
+        if (!localStorage.getItem('unicorn_theme') && data.themeParDefaut) {
           document.documentElement.setAttribute('data-theme', data.themeParDefaut);
         }
       } catch (e) {  }
@@ -3457,14 +3569,14 @@
 
       if (data.autoLoginActif) {
         let session = null;
-        try { session = JSON.parse(localStorage.getItem('sandystrip_auto_login') || 'null'); } catch (e) {  }
+        try { session = JSON.parse(localStorage.getItem('unicorn_auto_login') || 'null'); } catch (e) {  }
         if (session && session.identifiant && session.motdepasse) {
           afficherChargement('Reconnexion automatique...');
           google.script.run.withSuccessHandler(function (employe) {
             apresConnexionReussie(employe);
           }).withFailureHandler(function (err) {
             const msg = (err && (err.message || String(err))) || '';
-            try { localStorage.removeItem('sandystrip_auto_login'); } catch (e) {  }
+            try { localStorage.removeItem('unicorn_auto_login'); } catch (e) {  }
             const lower = msg.toLowerCase();
             if (lower.indexOf('suspendu') !== -1 || lower.indexOf('viré') !== -1) { afficherEcranSuspendu({ vire: lower.indexOf('viré') !== -1, detailBrut: msg }); return; }
             
@@ -3480,13 +3592,13 @@
 
     function sauvegarderSessionAutoLogin(identifiant, motdepasse) {
       if (!DATA || !DATA.autoLoginActif) return;
-      try { localStorage.setItem('sandystrip_auto_login', JSON.stringify({ identifiant: identifiant, motdepasse: motdepasse })); } catch (e) {  }
+      try { localStorage.setItem('unicorn_auto_login', JSON.stringify({ identifiant: identifiant, motdepasse: motdepasse })); } catch (e) {  }
     }
 
     function restaurerThemePersonnel_() {
       let pref = null;
-      try { pref = localStorage.getItem('sandystrip_theme'); } catch (e) {  }
-      document.documentElement.setAttribute('data-theme', pref || (DATA && DATA.themeParDefaut) || 'leopolds');
+      try { pref = localStorage.getItem('unicorn_theme'); } catch (e) {  }
+      document.documentElement.setAttribute('data-theme', pref || (DATA && DATA.themeParDefaut) || 'unicorn');
       demarrerRepereActionsDangereusesToutoule_();
     }
 
@@ -3517,8 +3629,8 @@
     }
     function afficherVitrinePublique() {
       masquerChargement();
-      document.documentElement.setAttribute('data-theme', DATA.themeVitrine || 'leopolds');
-      const nom = DATA.nomEntreprise || "LEOPOLD'S LOUNGE BAR";
+      document.documentElement.setAttribute('data-theme', DATA.themeVitrine || 'unicorn');
+      const nom = DATA.nomEntreprise || "UNICORN";
       document.getElementById('vitrine-brand').textContent = nom;
       document.title = nom;
       document.getElementById('vitrine-slogan').textContent = DATA.slogan || '';
@@ -3599,12 +3711,15 @@
         `<span class="vitrine-nav-lien" id="vitrine-nav-${p[0]}" onclick="allerPageVitrine('${p[0]}')">${p[1]}</span>`
       ).join('');
 
-      document.getElementById('vitrine-header-action').innerHTML = estClientConnecte
+      document.getElementById('vitrine-header-action').innerHTML = (estClientConnecte && CURRENT_USER.enTantQue)
+        ? `<div class="flex" style="align-items:center;gap:12px;"><span class="small">Tu consultes le compte de ${escapeHtml((CURRENT_USER.Prénom ? CURRENT_USER.Prénom + ' ' : '') + CURRENT_USER.Nom)}</span><button class="btn-primary" onclick="terminerVueClient()">Revenir à mon compte</button></div>`
+        : estClientConnecte
         ? `<div class="flex" style="align-items:center;gap:12px;"><span class="small">Bonjour, ${escapeHtml(CURRENT_USER.Prénom || CURRENT_USER.Nom)}</span><button class="btn-ghost" onclick="logout()">Se déconnecter</button></div>`
         : '<button class="btn-primary" onclick="ouvrirEcranConnexion()">Se connecter</button>';
       if (estClientConnecte) {
         document.getElementById('moncompte-nom').textContent = (CURRENT_USER.Prénom ? CURRENT_USER.Prénom + ' ' : '') + CURRENT_USER.Nom;
         document.getElementById('moncompte-telephone').value = CURRENT_USER.Téléphone || '';
+        document.getElementById('btn-changer-mdp-client').classList.toggle('hidden', !!CURRENT_USER.enTantQue);
         google.script.run.withSuccessHandler(function (fiche) {
           const el = document.getElementById('moncompte-vip');
           if (fiche) {
@@ -3672,6 +3787,7 @@
       CURRENT_USER = compte;
       if (compte.typeCompte === 'client') {
         enterEspaceClient();
+        if (compte.DoitChangerMdp) ouvrirChangementMdpClient(true);
       } else {
         enterApp();
       }
@@ -3797,7 +3913,7 @@
     function ouvrirBilletUI(id) {
       const r = DATA.statutReservation && DATA.statutReservation.derniereReservation;
       if (!r || r.ID !== id) return;
-      document.getElementById('billet-marque').textContent = DATA.nomEntreprise || "LEOPOLD'S LOUNGE BAR";
+      document.getElementById('billet-marque').textContent = DATA.nomEntreprise || "UNICORN";
       document.getElementById('billet-nom').textContent = r.Nom;
       document.getElementById('billet-date').textContent = fmtDate(r.DateReservation);
       document.getElementById('billet-heure').textContent = r.Heure;
@@ -3939,9 +4055,9 @@
       document.getElementById('login-screen').classList.toggle('plein-ecran', vitrineDesactivee);
       document.getElementById('login-screen').classList.remove('hidden');
 
-      document.getElementById('brand-login').textContent = DATA.nomEntreprise || "LEOPOLD'S LOUNGE BAR";
-      document.getElementById('brand-header').textContent = DATA.nomEntreprise || "LEOPOLD'S LOUNGE BAR";
-      document.title = (DATA.nomEntreprise || "LEOPOLD'S LOUNGE BAR") + ' - Comptabilité';
+      document.getElementById('brand-login').textContent = DATA.nomEntreprise || "UNICORN";
+      document.getElementById('brand-header').textContent = DATA.nomEntreprise || "UNICORN";
+      document.title = (DATA.nomEntreprise || "UNICORN") + ' - Comptabilité';
       if (DATA.slogan) {
         document.getElementById('login-slogan').textContent = DATA.slogan;
         document.getElementById('login-slogan-wrap').classList.remove('hidden');
@@ -3994,7 +4110,7 @@
         raisonEl.textContent = opts.raison ? 'Raison : ' + opts.raison : '';
       }
       masquerChargement();
-      try { localStorage.removeItem('sandystrip_auto_login'); } catch (e) {  }
+      try { localStorage.removeItem('unicorn_auto_login'); } catch (e) {  }
     }
     function onError(err) {
       const msg = err.message || String(err);
@@ -4076,19 +4192,19 @@
     });
     
     const MOTS_CODES_CACHES = {
-      'leopold': 'Le vrai Leopold n\'a jamais existé. Ou peut-être que si.',
+      'licorne': 'On dit qu\'elle ne se montre qu\'après minuit.',
       'jazz': 'Quelque part, un saxophone joue encore.'
     };
     function verifierMotCodeCache_(valeur) {
       const v = (valeur || '').trim().toLowerCase();
-      if (v === 'leopold') { showToast(MOTS_CODES_CACHES[v]); lancerShimmerOr_(); }
+      if (v === 'licorne') { showToast(MOTS_CODES_CACHES[v]); lancerShimmerOr_(); }
       else if (v === 'jazz') { showToast(MOTS_CODES_CACHES[v]); lancerNotesMusicales_(); }
     }
     
     function lancerShimmerOr_() {
       const voile = document.createElement('div');
       voile.style.cssText = 'position:fixed;inset:0;z-index:2001;pointer-events:none;'
-        + 'background:linear-gradient(100deg, transparent 40%, rgba(255,207,64,.28) 50%, transparent 60%);'
+        + 'background:linear-gradient(100deg, transparent 40%, rgba(205,178,255,.30) 50%, transparent 60%);'
         + 'background-size:250% 100%;background-position:150% 0;';
       document.body.appendChild(voile);
       voile.animate([{ backgroundPosition: '150% 0' }, { backgroundPosition: '-50% 0' }], { duration: 1400, easing: 'ease-in-out' });
@@ -4132,9 +4248,9 @@
       try { localStorage.setItem(cle, valeur); } catch (e) {  }
     }
 
-    function modeReordonnancement() { return getPref_('sandystrip_mode_reordonnancement', 'fleches'); }
+    function modeReordonnancement() { return getPref_('unicorn_mode_reordonnancement', 'fleches'); }
     function definirModeReordonnancement(mode) {
-      setPref_('sandystrip_mode_reordonnancement', mode);
+      setPref_('unicorn_mode_reordonnancement', mode);
       try { renderArticlesAdmin(); } catch (e) {}
       try { renderSectionPatron(); } catch (e) {}
       try { renderMenusActifsListe(); } catch (e) {}
@@ -4151,7 +4267,7 @@
     function renderThemeVitrineBoutons() {
       const el = document.getElementById('ms-theme-vitrine-boutons');
       if (!el) return;
-      const actuel = DATA.themeVitrine || 'leopolds';
+      const actuel = DATA.themeVitrine || 'unicorn';
       el.innerHTML = THEMES.map(th =>
         `<button class="filter-btn ${th[0] === actuel ? 'active' : ''}" onclick="definirThemeVitrine('${th[0]}')">${t(th[1])}</button>`
       ).join('');
@@ -4306,13 +4422,13 @@
     function appliquerPreferencesMenu() {
       const shell = document.getElementById('app-shell');
       const nav = document.getElementById('nav');
-      const position = getPref_('sandystrip_menu_position', 'left');
+      const position = getPref_('unicorn_menu_position', 'left');
       shell.className = 'pos-' + position;
       nav.classList.remove('collapsed'); 
       renderParametresMenuBoutons();
     }
     function definirPositionMenu(position) {
-      setPref_('sandystrip_menu_position', position);
+      setPref_('unicorn_menu_position', position);
       appliquerPreferencesMenu();
     }
     function toggleNavCollapse() {
@@ -4322,7 +4438,7 @@
     function renderParametresMenuBoutons() {
       const el = document.getElementById('profil-position-boutons');
       if (!el) return;
-      const position = getPref_('sandystrip_menu_position', 'left');
+      const position = getPref_('unicorn_menu_position', 'left');
       const options = [['left', t('settings.left')], ['right', t('settings.right')]];
       el.innerHTML = `<select onchange="definirPositionMenu(this.value)" style="width:auto;min-width:140px;">
         ${options.map(o => `<option value="${o[0]}" ${o[0] === position ? 'selected' : ''}>${o[1]}</option>`).join('')}
@@ -4335,7 +4451,7 @@
       const errEl = document.getElementById('login-err');
       errEl.textContent = '';
       if (!identifiant) { errEl.textContent = 'Entre ton identifiant.'; return; }
-      try { localStorage.setItem('sandystrip_saved_identifiant', identifiant); } catch (e) {  }
+      try { localStorage.setItem('unicorn_saved_identifiant', identifiant); } catch (e) {  }
       afficherChargement('Connexion...');
       google.script.run.withSuccessHandler(function (employe) {
         sauvegarderSessionAutoLogin(identifiant, pwd);
@@ -4377,7 +4493,7 @@
     function logoutReel_() {
       CURRENT_USER = null; CART = [];
       clearInterval(TIMER_SURVEILLANCE_GENERALE);
-      try { localStorage.removeItem('sandystrip_auto_login'); } catch (e) {  }
+      try { localStorage.removeItem('unicorn_auto_login'); } catch (e) {  }
       document.getElementById('app').style.display = 'none';
       document.getElementById('login-screen').classList.add('hidden');
       if (DATA.vitrineActive === false) { afficherEcranLoginNormal(); } else { afficherVitrinePublique(); }
@@ -4410,13 +4526,13 @@
         document.getElementById('app').style.display = 'block';
         appliquerPageClientActive_();
 
-        document.getElementById('brand-header').textContent = DATA.nomEntreprise || "LEOPOLD'S LOUNGE BAR";
-        document.title = (DATA.nomEntreprise || "LEOPOLD'S LOUNGE BAR") + ' - Comptabilité';
+        document.getElementById('brand-header').textContent = DATA.nomEntreprise || "UNICORN";
+        document.title = (DATA.nomEntreprise || "UNICORN") + ' - Comptabilité';
         document.getElementById('header-bienvenue').textContent =
           t('header.bienvenue') + ', ' + (CURRENT_USER['Nom RP'] || '') + ' (' + (CURRENT_USER['Rôle'] || '') + ')' + (CURRENT_USER.Statut ? ' - ' + CURRENT_USER.Statut : '');
 
         CAN_SEE_MASTER_SETTINGS = estValeurVraie_(CURRENT_USER.MasterSettings);
-        try { sessionStorage.removeItem('sandystrip_reload_session_expiree'); } catch (e) {  }
+        try { sessionStorage.removeItem('unicorn_reload_session_expiree'); } catch (e) {  }
         demarrerSurveillanceVersion();
         surveillanceGenerale();
         clearInterval(TIMER_SURVEILLANCE_GENERALE); // au cas où une session précédente (logout/login sans recharger) en aurait laissé une tourner
@@ -4655,10 +4771,10 @@
       renderParametresMenuBoutons();
       renderParametresThemeBoutons();
       renderParametresLangueBoutons();
-      document.getElementById('pref-son-vente').checked = getPref_('sandystrip_son_vente', '0') === '1';
+      document.getElementById('pref-son-vente').checked = getPref_('unicorn_son_vente', '0') === '1';
       document.getElementById('profil-son-choix-ligne').classList.toggle('hidden', !document.getElementById('pref-son-vente').checked);
       renderProfilSonChoixBoutons();
-      document.getElementById('pref-animations-reduites').checked = getPref_('sandystrip_animations_reduites', '0') === '1';
+      document.getElementById('pref-animations-reduites').checked = getPref_('unicorn_animations_reduites', '0') === '1';
       renderProfilDensiteBoutons();
       document.getElementById('profil-recherche-input').value = '';
       filtrerProfilParametres('');
@@ -5171,13 +5287,13 @@
     }
 
     function appliquerEtatLeaderboardPanel() {
-      const collapsed = getPref_('sandystrip_leaderboard_collapsed', '0') === '1';
+      const collapsed = getPref_('unicorn_leaderboard_collapsed', '0') === '1';
       document.getElementById('dashboard-layout').classList.toggle('leaderboard-collapsed', collapsed);
       document.getElementById('btn-toggle-leaderboard').textContent = collapsed ? t('dashboard.showLeaderboard') : t('dashboard.hideLeaderboard');
     }
     function toggleLeaderboardPanel() {
-      const collapsed = getPref_('sandystrip_leaderboard_collapsed', '0') === '1';
-      setPref_('sandystrip_leaderboard_collapsed', collapsed ? '0' : '1');
+      const collapsed = getPref_('unicorn_leaderboard_collapsed', '0') === '1';
+      setPref_('unicorn_leaderboard_collapsed', collapsed ? '0' : '1');
       appliquerEtatLeaderboardPanel();
     }
 
@@ -5841,14 +5957,22 @@
     let CC_APERCU_TIMER = null;
     let SP_APERCU_TIMER = null;
 
-    function genererMdpEmploye_(nom, prenom) {
-      const nettoie = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z]/g, '').toLowerCase();
-      return nettoie(prenom).slice(0, 3) + nettoie(nom);
+    // Mot de passe aléatoire propre à chaque compte (alphabet sans caractères ambigus : pas de 0/O, 1/l/I).
+    function genererMdpEmploye_() {
+      const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
+      const tirages = new Uint32Array(10);
+      crypto.getRandomValues(tirages);
+      let mdp = '';
+      for (let i = 0; i < tirages.length; i++) mdp += alphabet.charAt(tirages[i] % alphabet.length);
+      return mdp;
     }
     function genererIdentifiantEtMdpEmploye_() {
       const nom = document.getElementById('sp-nom').value.trim();
       const prenom = document.getElementById('sp-prenom').value.trim();
-      document.getElementById('sp-motdepasse').value = nom ? genererMdpEmploye_(nom, prenom) : '';
+      const champMdp = document.getElementById('sp-motdepasse');
+      // Généré une seule fois (pas à chaque lettre tapée) ; vidé si on efface le nom.
+      if (!nom) champMdp.value = '';
+      else if (!champMdp.value) champMdp.value = genererMdpEmploye_();
       clearTimeout(SP_APERCU_TIMER);
       SP_APERCU_TIMER = setTimeout(function () {
         const idEl = document.getElementById('sp-identifiant');
@@ -5989,7 +6113,7 @@
           statutVip = `${escapeHtml(c.vip.OffreNom)} - <span class="${d.classe}">${d.texte}</span>`;
         }
         return `<tr><td>${escapeHtml((c.Prénom ? c.Prénom + ' ' : '') + c.Nom)}</td><td class="small">${escapeHtml(c.Identifiant)}</td><td class="small">${escapeHtml(c.Téléphone || '-')}</td><td>${statutVip}</td>
-          <td>${c.vip ? `<a class="linklike" onclick="retirerVipClientUI('${c.ID}')">Retirer le VIP</a> ` : ''}<a class="linklike" onclick="supprimerCompteClientUI('${c.ID}')">Supprimer le compte</a></td></tr>`;
+          <td>${c.vip ? `<a class="linklike" onclick="retirerVipClientUI('${c.ID}')">Retirer le VIP</a> ` : ''}${CAN_SEE_MASTER_SETTINGS ? `<a class="linklike" onclick="voirCommeClientUI('${c.ID}')">Se connecter en tant que client</a> <a class="linklike" onclick="reinitialiserMdpClientUI('${c.ID}')">Réinitialiser le mot de passe</a> ` : ''}<a class="linklike" onclick="supprimerCompteClientUI('${c.ID}')">Supprimer le compte</a></td></tr>`;
       }).join('') || '<tr><td colspan="5" class="small">Aucun compte client pour l\'instant.</td></tr>';
     }
     function retirerVipClientUI(clientId) {
@@ -5998,6 +6122,89 @@
           chargerComptesClients();
           showToast('Statut VIP retiré.');
         }).withFailureHandler(onError).retirerVipClient(clientId, CURRENT_USER.ID, CURRENT_USER['Nom RP']);
+      }, true);
+    }
+    let MDP_CLIENT_FORCE = false;
+    function ouvrirChangementMdpClient(force) {
+      MDP_CLIENT_FORCE = !!force;
+      ['mdp-client-ancien', 'mdp-client-nouveau', 'mdp-client-confirmation'].forEach(function (id) { document.getElementById(id).value = ''; });
+      document.getElementById('mdp-client-err').textContent = '';
+      document.getElementById('mdp-client-titre').textContent = force ? 'Choisis ton mot de passe' : 'Changer mon mot de passe';
+      document.getElementById('mdp-client-intro').textContent = force
+        ? 'Le mot de passe qu\'on t\'a remis est provisoire. Choisis-en un à toi, que toi seul connaîtras.'
+        : '';
+      document.getElementById('mdp-client-fermer').classList.toggle('hidden', !!force);
+      document.getElementById('mdp-client-modal').classList.remove('hidden');
+    }
+    function fermerChangementMdpClient() {
+      if (MDP_CLIENT_FORCE) return; // impossible de fermer tant que le mot de passe provisoire n'est pas remplacé
+      document.getElementById('mdp-client-modal').classList.add('hidden');
+    }
+    let MDP_CLIENT_EN_COURS = false;
+    function validerChangementMdpClient() {
+      if (MDP_CLIENT_EN_COURS) return;
+      const ancien = document.getElementById('mdp-client-ancien').value;
+      const nouveau = document.getElementById('mdp-client-nouveau').value;
+      const confirmation = document.getElementById('mdp-client-confirmation').value;
+      const errEl = document.getElementById('mdp-client-err');
+      errEl.textContent = '';
+      if (!ancien || !nouveau) { errEl.textContent = 'Remplis tous les champs.'; return; }
+      if (nouveau.length < 6) { errEl.textContent = 'Le nouveau mot de passe doit faire au moins 6 caractères.'; return; }
+      if (nouveau !== confirmation) { errEl.textContent = 'La confirmation ne correspond pas.'; return; }
+      MDP_CLIENT_EN_COURS = true;
+      google.script.run.withSuccessHandler(function () {
+        MDP_CLIENT_EN_COURS = false;
+        MDP_CLIENT_FORCE = false;
+        CURRENT_USER.DoitChangerMdp = false;
+        // si la connexion automatique est active sur cet appareil, on met à jour le mot de passe mémorisé
+        try {
+          const auto = JSON.parse(localStorage.getItem('unicorn_auto_login') || 'null');
+          if (auto) { auto.motdepasse = nouveau; localStorage.setItem('unicorn_auto_login', JSON.stringify(auto)); }
+        } catch (e) {  }
+        document.getElementById('mdp-client-modal').classList.add('hidden');
+        showToast('Mot de passe mis à jour.');
+      }).withFailureHandler(function (err) {
+        MDP_CLIENT_EN_COURS = false;
+        errEl.textContent = err.message || String(err);
+      }).changerMonMotDePasse(ancien, nouveau, CURRENT_USER.sessionToken);
+    }
+    let SESSION_PROPRIO_SAUVEGARDEE = null;
+    function voirCommeClientUI(clientId) {
+      confirmerActionAvantExecution('Se connecter en tant que client',
+        'Tu vas voir le site exactement comme ce client le voit. Ce qu\'il fait (une réservation, par exemple) sera fait en son nom, et cette consultation est inscrite au journal. Son mot de passe reste inconnu et inchangé.',
+        function () {
+          google.script.run.withSuccessHandler(function (compte) {
+            SESSION_PROPRIO_SAUVEGARDEE = CURRENT_USER;
+            clearInterval(TIMER_SURVEILLANCE_GENERALE); // le suivi de présence de l'employé ne doit pas tourner sous l'identité du client
+            CURRENT_USER = compte;
+            fermerProfil();
+            document.getElementById('app').style.display = 'none';
+            afficherVitrinePublique();
+          }).withFailureHandler(onError).ouvrirSessionEnTantQueClient(clientId, CURRENT_USER.sessionToken);
+        }, true);
+    }
+    function terminerVueClient() {
+      if (!SESSION_PROPRIO_SAUVEGARDEE) return;
+      CURRENT_USER = SESSION_PROPRIO_SAUVEGARDEE;
+      SESSION_PROPRIO_SAUVEGARDEE = null;
+      DATA.statutReservation = null;
+      document.getElementById('vitrine-publique').classList.add('hidden');
+      document.getElementById('app').style.display = 'block';
+      restaurerThemePersonnel_();
+      document.title = (DATA.nomEntreprise || 'UNICORN') + ' - Comptabilité';
+      clearInterval(TIMER_SURVEILLANCE_GENERALE);
+      surveillanceGenerale();
+      TIMER_SURVEILLANCE_GENERALE = setInterval(surveillanceGenerale, 5000);
+    }
+    function reinitialiserMdpClientUI(clientId) {
+      confirmerActionAvantExecution('Réinitialiser le mot de passe', 'Un mot de passe provisoire va être créé. L\'ancien ne fonctionnera plus et le client devra en choisir un nouveau à sa prochaine connexion.', function () {
+        google.script.run.withSuccessHandler(function (res) {
+          document.getElementById('cc-mdp-valeur').textContent = res.identifiant + '  /  ' + res.motdepasse;
+          const bloc = document.getElementById('cc-mdp-revele');
+          bloc.classList.remove('hidden');
+          bloc.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          showToast('Mot de passe réinitialisé.');
+        }).withFailureHandler(onError).reinitialiserMotDePasseClient(clientId, CURRENT_USER.sessionToken);
       }, true);
     }
     function supprimerCompteClientUI(clientId) {
@@ -8234,8 +8441,8 @@
         if (lienFavicon && params.favicon) lienFavicon.href = params.favicon;
         DATA.devise = params.devise; DATA.themeParDefaut = params.themeDefaut; DATA.autoLoginActif = params.autoLogin;
         DATA.multiSuccursalesActif = multiSuccursales;
-        document.getElementById('brand-header').textContent = params.nomEntreprise || "LEOPOLD'S LOUNGE BAR";
-        document.title = (params.nomEntreprise || "LEOPOLD'S LOUNGE BAR") + ' - Comptabilité';
+        document.getElementById('brand-header').textContent = params.nomEntreprise || "UNICORN";
+        document.title = (params.nomEntreprise || "UNICORN") + ' - Comptabilité';
         renderMessageDuJourBanniere();
         appliquerVisibiliteSuccursales();
         if (echecs.length > 0) {
