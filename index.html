@@ -427,6 +427,13 @@
     .carte-plat-prix { font-family: 'Playfair Display', Georgia, serif; font-size: 15px; color: var(--gold); margin-left: 8px; }
     .carte-plat-desc { font-style: italic; font-size: 13px; color: var(--text-mute); margin-top: 4px; line-height: 1.5; }
     
+    .carte-entete { text-align: center; margin-bottom: 28px; }
+    .carte-grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 28px; align-items: start; }
+    .carte-grille .carte-cadre { width: 100%; box-sizing: border-box; }
+    .carte-cat-titre { font-family: 'Playfair Display', Georgia, serif; font-weight: 800; font-size: 26px; color: var(--gold); letter-spacing: 3px; text-transform: uppercase; line-height: 1.2; }
+    .carte-cat-liste { margin-top: 6px; }
+    .carte-cat-liste .carte-plat:last-child { margin-bottom: 0; }
+
     .billet-carte { background: var(--bg-panel); padding: 32px 28px; text-align: center; border-bottom: 2px solid var(--gold); }
     
     .coupon-carte { background: var(--bg-panel); border: 2px solid var(--gold); border-radius: 10px; padding: 28px 24px; text-align: center; }
@@ -841,7 +848,7 @@
         <div class="vit-cadre">
           <div class="vit-cadre-inner">
             <div class="vit-eventail"></div>
-            <div class="vit-kicker" id="vitrine-kicker">- Établi clandestinement en 1987 -</div>
+            <div class="vit-kicker" id="vitrine-kicker">- L'adresse la plus luxueuse de la nuit -</div>
             <h1 style="font-size:44px;line-height:1.3;margin:0;color:var(--vit-texte);">La nuit n'a jamais<br>brillé <span style="color:var(--vit-or);">aussi fort</span></h1>
             <div class="vit-diviseur-etoile">✦</div>
             <div id="vitrine-slogan" class="small" style="font-size:17px;max-width:440px;margin:0 auto;"></div>
@@ -873,21 +880,13 @@
       </div>
 
       <div id="vitrine-page-carte" class="vitrine-page hidden">
-        <div class="grid grid-2" style="align-items:start;gap:30px;">
-          <div class="carte-cadre">
-            <div class="carte-couronne">♛</div>
-            <div class="carte-titre-marque" id="carte-titre-marque"></div>
-            <div class="carte-sous-titre">Cartes &amp; Menus</div>
-            <div class="carte-diviseur">◆</div>
-            <div id="vitrine-menu"></div>
-          </div>
-          <div class="carte-cadre" id="carte-cigares-bloc">
-            <div class="carte-couronne">🚬</div>
-            <div class="carte-sous-titre" style="font-size:24px;">Nos cigares</div>
-            <div class="carte-diviseur">◆</div>
-            <div id="vitrine-cigares"></div>
-          </div>
+        <div class="carte-entete">
+          <div class="carte-couronne">♛</div>
+          <div class="carte-titre-marque" id="carte-titre-marque"></div>
+          <div class="carte-sous-titre">Cartes &amp; Menus</div>
+          <div class="carte-diviseur">◆</div>
         </div>
+        <div class="carte-grille" id="vitrine-menu"></div>
       </div>
 
       <div id="vitrine-page-vip" class="vitrine-page hidden">
@@ -3664,25 +3663,40 @@
         const cat = a.Catégorie || 'Autres';
         (parCategorie[cat] = parCategorie[cat] || []).push(a);
       });
-      const categories = Object.keys(parCategorie);
-      document.getElementById('vitrine-menu').innerHTML = categories.length
-        ? categories.map(cat => `
-            <div class="carte-section-titre">${escapeHtml(cat)}</div>
-            ${parCategorie[cat].map(a => `
-              <div class="carte-plat">
-                <div><span class="carte-plat-nom">${escapeHtml(a.Article)}</span>${afficherPrix ? '<span class="carte-plat-prix">' + money(a['Prix vente ($)']) + '</span>' : ''}</div>
-                ${a.Notes ? '<div class="carte-plat-desc">' + escapeHtml(a.Notes) + '</div>' : ''}
-              </div>`).join('')}
-          `).join('')
-        : '<div class="small mt16">La carte arrive bientôt.</div>';
-
-      document.getElementById('vitrine-cigares').innerHTML = (DATA.cigares || []).length
-        ? DATA.cigares.map(c => `
-            <div class="carte-plat">
-              <div><span class="carte-plat-nom">${escapeHtml(c.Nom)}</span>${afficherPrix && c.Prix ? '<span class="carte-plat-prix">' + money(c.Prix) + '</span>' : ''}</div>
-              ${c.Description ? '<div class="carte-plat-desc">' + escapeHtml(c.Description) + '</div>' : ''}
+      const normCat_ = t => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+      const CARTES = [
+        { titre: 'Cocktails', icone: '🍸', alias: ['cocktail', 'cocktails'] },
+        { titre: 'Alcools',   icone: '🥂', alias: ['alcool', 'alcools'] },
+        { titre: 'Soft',      icone: '🥤', alias: ['soft', 'softs'] },
+        { titre: 'Encas',     icone: '🧀', alias: ['encas', 'en-cas', 'en cas'] },
+        { titre: 'Entrées',   icone: '🥗', alias: ['entree', 'entrees'] },
+        { titre: 'Plats',     icone: '🍽️', alias: ['plat', 'plats'] },
+        { titre: 'Desserts',  icone: '🍰', alias: ['dessert', 'desserts'] }
+      ];
+      const cartes = CARTES.map(c => ({ titre: c.titre, icone: c.icone, items: [] }));
+      const autres = {};
+      Object.keys(parCategorie).forEach(cat => {
+        const idx = CARTES.findIndex(c => c.alias.indexOf(normCat_(cat)) !== -1);
+        if (idx !== -1) cartes[idx].items = cartes[idx].items.concat(parCategorie[cat]);
+        else autres[cat] = parCategorie[cat];
+      });
+      Object.keys(autres).forEach(cat => cartes.push({ titre: cat, icone: '✦', items: autres[cat] }));
+      const cartesVisibles = cartes.filter(c => c.items.length);
+      document.getElementById('vitrine-menu').innerHTML = cartesVisibles.length
+        ? cartesVisibles.map(c => `
+            <div class="carte-cadre">
+              <div class="carte-couronne">${c.icone}</div>
+              <div class="carte-cat-titre">${escapeHtml(c.titre)}</div>
+              <div class="carte-diviseur">◆</div>
+              <div class="carte-cat-liste">
+                ${c.items.map(a => `
+                  <div class="carte-plat">
+                    <div><span class="carte-plat-nom">${escapeHtml(a.Article)}</span>${afficherPrix ? '<span class="carte-plat-prix">' + money(a['Prix vente ($)']) + '</span>' : ''}</div>
+                    ${a.Notes ? '<div class="carte-plat-desc">' + escapeHtml(a.Notes) + '</div>' : ''}
+                  </div>`).join('')}
+              </div>
             </div>`).join('')
-        : '<div class="small mt16">À venir.</div>';
+        : '<div class="small mt16" style="grid-column:1/-1;text-align:center;">La carte arrive bientôt.</div>';
 
       document.getElementById('vitrine-vip').innerHTML = (DATA.vipOffres || []).map(o => `
         <div class="card">
