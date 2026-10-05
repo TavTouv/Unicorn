@@ -1254,7 +1254,14 @@
       <section id="tab-ventes" class="hidden">
         <div class="ms-layout">
         <div class="ms-sidebar" id="ventes-mode-boutons">
-          <button class="ms-sidebar-item active" onclick="changerModeVente('normale', this)">Vente normale</button>
+          <button class="ms-sidebar-item active" onclick="changerModeVente('normale', this, 'Soft')">Soft</button>
+          <button class="ms-sidebar-item" onclick="changerModeVente('normale', this, 'Alcools')">Alcools</button>
+          <button class="ms-sidebar-item" onclick="changerModeVente('normale', this, 'Cocktails')">Cocktails</button>
+          <button class="ms-sidebar-item" onclick="changerModeVente('normale', this, 'Plats')">Plats</button>
+          <button class="ms-sidebar-item" onclick="changerModeVente('normale', this, 'Entrées')">Entrées</button>
+          <button class="ms-sidebar-item" onclick="changerModeVente('normale', this, 'Desserts')">Desserts</button>
+          <button class="ms-sidebar-item" onclick="changerModeVente('normale', this, 'Encas')">Encas</button>
+          <button class="ms-sidebar-item hidden" id="ventes-btn-autres" onclick="changerModeVente('normale', this, 'Autres')">Autres</button>
           <button class="ms-sidebar-item" onclick="changerModeVente('cigares', this)">Cigares</button>
           <button class="ms-sidebar-item" onclick="changerModeVente('export', this)">Export</button>
         </div>
@@ -1263,8 +1270,8 @@
         <div id="ventes-mode-normale">
           <div class="grid grid-2">
             <div class="card">
-              <div class="flex-between" style="align-items:center;">
-                <h2 style="margin:0;">Catalogue</h2>
+              <div class="flex-between" style="align-items:center;margin-bottom:14px;">
+                <h2 style="margin:0;" id="catalogue-titre">Catalogue</h2>
                 <input id="catalogue-recherche" placeholder="Rechercher..." style="width:160px;" oninput="renderCatalogueCaisse()">
               </div>
               <div id="catalogue-list"></div>
@@ -5635,16 +5642,46 @@
       return DATA.articles.filter(a => !a.Succursale || a.Succursale === CURRENT_USER.Succursale);
     }
 
+    // Catégories de la caisse (même regroupement que la carte publique : "Cocktail" = "Cocktails", etc.)
+    const CATEGORIES_CAISSE = [
+      { titre: 'Soft',      alias: ['soft', 'softs'] },
+      { titre: 'Alcools',   alias: ['alcool', 'alcools'] },
+      { titre: 'Cocktails', alias: ['cocktail', 'cocktails'] },
+      { titre: 'Plats',     alias: ['plat', 'plats'] },
+      { titre: 'Entrées',   alias: ['entree', 'entrees'] },
+      { titre: 'Desserts',  alias: ['dessert', 'desserts'] },
+      { titre: 'Encas',     alias: ['encas', 'en-cas', 'en cas'] }
+    ];
+    let CATALOGUE_CATEGORIE = 'Soft';
+    function categorieCaisse_(cat) {
+      const n = String(cat || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+      const c = CATEGORIES_CAISSE.find(x => x.alias.indexOf(n) !== -1);
+      return c ? c.titre : 'Autres';
+    }
     function renderCatalogueCaisse() {
       const list = document.getElementById('catalogue-list');
       const champRecherche = document.getElementById('catalogue-recherche');
       const recherche = champRecherche ? champRecherche.value.trim().toLowerCase() : '';
-      const items = articlesVisiblesPourMoi().filter(item => !recherche || item.Article.toLowerCase().indexOf(recherche) !== -1);
+      const visibles = articlesVisiblesPourMoi();
+
+      // Le bouton "Autres" n'apparaît que s'il existe des articles hors des 7 catégories.
+      const aDesAutres = visibles.some(item => categorieCaisse_(item.Catégorie) === 'Autres');
+      const btnAutres = document.getElementById('ventes-btn-autres');
+      if (btnAutres) btnAutres.classList.toggle('hidden', !aDesAutres);
+      if (!aDesAutres && CATALOGUE_CATEGORIE === 'Autres') CATALOGUE_CATEGORIE = 'Soft';
+
+      // Une recherche cherche dans TOUTES les catégories ; sans recherche, on filtre sur la catégorie choisie.
+      const items = recherche
+        ? visibles.filter(item => item.Article.toLowerCase().indexOf(recherche) !== -1)
+        : visibles.filter(item => categorieCaisse_(item.Catégorie) === CATALOGUE_CATEGORIE);
+      const titre = document.getElementById('catalogue-titre');
+      if (titre) titre.textContent = recherche ? 'Résultats' : CATALOGUE_CATEGORIE;
+
       list.innerHTML = items.map(item =>
         `<div class="catalogue-item" onclick="addToCart('${item.ID}')">
-          <span>${escapeHtml(item.Article)}${(item.Succursale && DATA.multiSuccursalesActif) ? ` <span class="small">(${escapeHtml(item.Succursale)})</span>` : ''}</span><span class="price">${money(item['Prix vente ($)'])}</span>
+          <span>${escapeHtml(item.Article)}${(item.Succursale && DATA.multiSuccursalesActif) ? ` <span class="small">(${escapeHtml(item.Succursale)})</span>` : ''}${recherche ? ` <span class="small">- ${escapeHtml(categorieCaisse_(item.Catégorie))}</span>` : ''}</span><span class="price">${money(item['Prix vente ($)'])}</span>
         </div>`
-      ).join('') || (recherche ? '<div class="small">Aucun résultat pour "' + escapeHtml(recherche) + '".</div>' : '<div class="small">Catalogue vide.</div>');
+      ).join('') || (recherche ? '<div class="small">Aucun résultat pour "' + escapeHtml(recherche) + '".</div>' : '<div class="small">Aucun article dans cette catégorie.</div>');
     }
 
     function addToCart(itemId) {
@@ -5761,7 +5798,13 @@
       return e ? (e.Succursale || '') : '';
     }
 
-    function changerModeVente(mode, btnEl) {
+    function changerModeVente(mode, btnEl, categorie) {
+      if (mode === 'normale' && categorie) {
+        CATALOGUE_CATEGORIE = categorie;
+        const champ = document.getElementById('catalogue-recherche');
+        if (champ) champ.value = '';
+        renderCatalogueCaisse();
+      }
       document.getElementById('ventes-mode-normale').classList.toggle('hidden', mode !== 'normale');
       document.getElementById('ventes-mode-cigares').classList.toggle('hidden', mode !== 'cigares');
       document.getElementById('ventes-mode-export').classList.toggle('hidden', mode !== 'export');
