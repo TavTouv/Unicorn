@@ -21,6 +21,11 @@
         __savedTheme = 'unicorn';
         localStorage.setItem('unicorn_theme', __savedTheme);
       }
+      var __anciens = { leopolds: 'nuitroyale', sandystrip: 'champagne', toutoule: 'opale' };
+      if (__anciens[__savedTheme]) {
+        __savedTheme = __anciens[__savedTheme];
+        localStorage.setItem('unicorn_theme', __savedTheme);
+      }
       document.documentElement.setAttribute('data-theme', __savedTheme || 'unicorn');
     } catch (e) {  }
   </script>
@@ -106,120 +111,180 @@
     [data-theme="clair"] .settings-row-label {
       font-family: 'Manrope', sans-serif; font-weight: 700;
     }
-    [data-theme="sandystrip"] {
-      --bg: #17040e; --bg-panel: #22081a; --bg-card: #2c0c20; --bg-card2: #360f29;
-      --border: #4c1534; --border-soft: #3b102a;
-      --text: #fdf1f8; --text-mute: #e3a9c6; --text-faint: #b57997;
-      --pink: #ff2d78; --pink-deep: #d1105a;
-      --gold: #ffcf4d; --cyan: #4de0c9;
-      --green: #4de08a; --red: #ff4d6a;
-      
-      --anim-duree: .22s; --anim-easing: cubic-bezier(.34, 1.56, .64, 1);
+    /* ===== Thème Nuit Royale : bleu minuit et or royal ===== */
+    [data-theme="nuitroyale"] {
+      --bg: #050b1c; --bg-panel: #0a1330; --bg-card: #0f1b3f; --bg-card2: #15244f;
+      --border: #33446e; --border-soft: #1d2c59;
+      --text: #f3ecd8; --text-mute: #a8b0cc; --text-faint: #6f7aa3;
+      --pink: #e3c06c; --pink-deep: #b08d2f;
+      --gold: #f0d58a; --cyan: #7fb8e8;
+      --green: #5fc9a0; --red: #e05a6f;
+      --anim-duree: .28s; --anim-easing: cubic-bezier(.22, .8, .3, 1);
     }
-    [data-theme="sandystrip"] h2, [data-theme="sandystrip"] h3, [data-theme="sandystrip"] .brand {
-      font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px;
+    [data-theme="nuitroyale"] body {
+      background-image: radial-gradient(ellipse at 15% -5%, rgba(70,100,210,.20), transparent 55%), radial-gradient(ellipse at 90% 105%, rgba(227,192,108,.07), transparent 48%);
+      background-attachment: fixed;
     }
-    [data-theme="sandystrip"] .kpi-label, [data-theme="sandystrip"] th, [data-theme="sandystrip"] .ms-sidebar-item,
-    [data-theme="sandystrip"] #nav-items button, [data-theme="sandystrip"] .filter-btn, [data-theme="sandystrip"] .kpi-value,
-    [data-theme="sandystrip"] .settings-row-label {
-      font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px;
-    }
-    [data-theme="toutoule"] {
-      --bg: #170a2e; --bg-panel: #1d0f3a; --bg-card: #241347; --bg-card2: #2d1857;
-      --border: #4d2f8a; --border-soft: #38226b;
-      --text: #ece6ff; --text-mute: #b0a0e0; --text-faint: #8879bb;
-      --pink: #a565f7; --pink-deep: #7c3aed;
-      --gold: #b794f6; --cyan: #7dd3fc;
-      --green: #22ff6e; --red: #ff2d4d;
-    }
-    /* Aucun jaune nulle part : le doré générique de l'app est remplacé par le même violet que
-       l'accent principal, plutôt que de laisser le jaune par défaut passer à travers. */
-    [data-theme="toutoule"] .btn-gold { background: var(--pink); color: #fff; }
-    [data-theme="toutoule"] .kpi-gold { color: var(--pink); }
-    /* Boutons contrastés qui "ressortent" bien du fond sombre : bordure claire + lueur, pas juste
-       un simple fond plat comme les autres thèmes. */
-    [data-theme="toutoule"] button, [data-theme="toutoule"] .btn-primary, [data-theme="toutoule"] .btn-gold,
-    [data-theme="toutoule"] .btn-ghost {
-      border: 1.5px solid rgba(236,230,255,.25); box-shadow: 0 2px 12px rgba(139,92,246,.35);
-    }
-    /* Validation = vert partout, sans exception - le bouton principal de l'app (Enregistrer,
-       Ajouter, Valider...) devient vert plutôt que la couleur d'accent du thème. */
-    [data-theme="toutoule"] .btn-primary {
-      background: linear-gradient(90deg, var(--green), #16c94f); color: #04170a; border-color: rgba(34,255,110,.4);
-      box-shadow: 0 2px 14px rgba(34,255,110,.4);
-    }
-    /* Suppression = rouge partout - géré en JS (marquerActionsDangereusesToutoule_) pour les liens
-       "Supprimer/Retirer/Vider..." qui n'ont pas de classe dédiée, voir plus bas dans le script. */
-    [data-theme="toutoule"] a.linklike.linklike-danger {
-      color: var(--red); border-color: rgba(255,45,77,.4); background: rgba(255,45,77,.08);
-    }
-    [data-theme="toutoule"] .btn-danger {
-      background: var(--red); box-shadow: 0 2px 14px rgba(255,45,77,.45);
-    }
-
-    [data-theme="leopolds"] {
-      --bg: #000000; --bg-panel: #0a0805; --bg-card: #120e08; --bg-card2: #1a140c;
-      --border: #4a3712; --border-soft: #2c2212;
-      --text: #f2e6c9; --text-mute: #ab9a72; --text-faint: #7d6f52;
-      --pink: #e8b923; --pink-deep: #b8901a;
-      --gold: #ffcf40; --cyan: #5a8a8c;
-      --green: #6b8f5a; --red: #8f3a3a;
-      
-      --anim-duree: .3s; --anim-easing: ease-in-out;
-    }
-    
-    [data-theme="leopolds"] body {
-      background-image:
-        radial-gradient(ellipse at 20% 15%, rgba(201,169,97,.05), transparent 55%),
-        radial-gradient(ellipse at 85% 80%, rgba(90,138,140,.04), transparent 50%),
-        repeating-radial-gradient(circle at 0 0, transparent 0, rgba(0,0,0,.15) 2px, transparent 3px);
-      background-size: auto, auto, 3px 3px;
-    }
-    
-    [data-theme="leopolds"] h1, [data-theme="leopolds"] h2, [data-theme="leopolds"] h3, [data-theme="leopolds"] .brand {
-      font-family: 'Playfair Display', Georgia, serif; letter-spacing: .3px;
-    }
-    [data-theme="leopolds"] .brand { font-weight: 800; letter-spacing: 1.5px; }
-    
-    [data-theme="leopolds"] .kpi-label, [data-theme="leopolds"] th, [data-theme="leopolds"] .filter-btn, [data-theme="leopolds"] .settings-row-label {
-      letter-spacing: 1px; font-weight: 600;
-    }
-    [data-theme="leopolds"] .ms-sidebar-item:not(.active), [data-theme="leopolds"] #nav-items button:not(.active) {
-      color: var(--text-mute); font-weight: 500; letter-spacing: .2px;
-    }
-    [data-theme="leopolds"] .kpi-value { font-family: 'Playfair Display', Georgia, serif; font-weight: 700; }
-    
-    [data-theme="leopolds"] .card:has(.kpi-value) {
-      border-top: 2px solid var(--gold);
-      box-shadow: 0 6px 20px rgba(201, 169, 97, .06);
-    }
-    [data-theme="leopolds"] .btn-primary, [data-theme="leopolds"] .btn-gold {
-      background: linear-gradient(135deg, var(--gold), var(--pink-deep));
-      color: #16110a; font-weight: 700; text-shadow: none;
-    }
-    
-    [data-theme="leopolds"] button, [data-theme="leopolds"] a.linklike, [data-theme="leopolds"] a.chip-btn {
+    [data-theme="nuitroyale"] h1, [data-theme="nuitroyale"] h2, [data-theme="nuitroyale"] h3, [data-theme="nuitroyale"] .brand {
       font-family: 'Playfair Display', Georgia, serif; letter-spacing: .4px;
     }
-    [data-theme="leopolds"] .btn-ghost {
+    [data-theme="nuitroyale"] .brand { font-weight: 800; letter-spacing: 2px; }
+    [data-theme="nuitroyale"] .kpi-label, [data-theme="nuitroyale"] th, [data-theme="nuitroyale"] .filter-btn, [data-theme="nuitroyale"] .settings-row-label {
+      letter-spacing: 1px; font-weight: 600;
+    }
+    [data-theme="nuitroyale"] .ms-sidebar-item:not(.active), [data-theme="nuitroyale"] #nav-items button:not(.active) {
+      color: var(--text-mute); font-weight: 500; letter-spacing: .2px;
+    }
+    [data-theme="nuitroyale"] .kpi-value { font-family: 'Playfair Display', Georgia, serif; font-weight: 700; }
+    [data-theme="nuitroyale"] .card:has(.kpi-value) {
+      border-top: 2px solid var(--gold);
+      box-shadow: 0 6px 20px rgba(227,192,108, .07);
+    }
+    [data-theme="nuitroyale"] .btn-primary, [data-theme="nuitroyale"] .btn-gold {
+      background: linear-gradient(135deg, var(--gold), var(--pink-deep));
+      color: #0a1330; font-weight: 700; text-shadow: none;
+    }
+    [data-theme="nuitroyale"] button, [data-theme="nuitroyale"] a.linklike, [data-theme="nuitroyale"] a.chip-btn {
+      font-family: 'Playfair Display', Georgia, serif; letter-spacing: .4px;
+    }
+    [data-theme="nuitroyale"] .btn-ghost {
       background: var(--bg-card2); border: 1px solid var(--border); color: var(--text);
     }
-    [data-theme="leopolds"] .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
-    [data-theme="leopolds"] .btn-danger {
-      background: linear-gradient(135deg, var(--red), #4a1c1c); color: #f3e4d4; font-weight: 700;
+    [data-theme="nuitroyale"] .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+    [data-theme="nuitroyale"] .btn-danger {
+      background: linear-gradient(135deg, var(--red), #5a1626); color: #fbe9ec; font-weight: 700;
     }
-    [data-theme="leopolds"] a.linklike {
+    [data-theme="nuitroyale"] a.linklike {
       background: var(--bg-card2); border-color: var(--border); color: var(--pink);
     }
-    [data-theme="leopolds"] a.linklike:hover { border-color: var(--gold); color: var(--gold); background: var(--bg-card); }
-    
-    [data-theme="leopolds"] #app-shell.pos-left nav button.active, [data-theme="leopolds"] #app-shell.pos-right nav button.active,
-    [data-theme="leopolds"] .ms-sidebar-item.active {
-      background: rgba(201, 169, 97, .1); color: var(--gold);
+    [data-theme="nuitroyale"] a.linklike:hover { border-color: var(--gold); color: var(--gold); background: var(--bg-card); }
+    [data-theme="nuitroyale"] #app-shell.pos-left nav button.active, [data-theme="nuitroyale"] #app-shell.pos-right nav button.active,
+    [data-theme="nuitroyale"] .ms-sidebar-item.active {
+      background: rgba(227,192,108, .12); color: var(--gold);
       border-left: 3px solid var(--gold); border-radius: 0 6px 6px 0;
     }
-    [data-theme="leopolds"] .ms-sidebar-item.active { padding-left: 8px; }
-    [data-theme="leopolds"] nav button.active { background: var(--pink); color: #16110a; }
+    [data-theme="nuitroyale"] .ms-sidebar-item.active { padding-left: 8px; }
+    [data-theme="nuitroyale"] nav button.active { background: var(--pink); color: #0a1330; }
+    [data-theme="nuitroyale"] :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+    [data-theme="nuitroyale"] #vitrine-publique {
+      --vit-bg: #050b1c; --vit-bg2: #0a1330; --vit-or: #e3c06c; --vit-or-vif: #f0d58a;
+      --vit-brun: #2c3f78; --vit-brun-clair: #5a73b8; --vit-texte: #f3ecd8; --vit-texte-mute: #a8b0cc;
+    }
+
+    /* ===== Thème Champagne Noir : noir velours et or rose ===== */
+    [data-theme="champagne"] {
+      --bg: #0b0708; --bg-panel: #130d0e; --bg-card: #1b1213; --bg-card2: #241819;
+      --border: #4a3033; --border-soft: #2f1e20;
+      --text: #f7ebe4; --text-mute: #b9a198; --text-faint: #7e675f;
+      --pink: #e8b4a0; --pink-deep: #b9806d;
+      --gold: #f2cfa0; --cyan: #9cc7c4;
+      --green: #8fbf93; --red: #d4566a;
+      --anim-duree: .28s; --anim-easing: cubic-bezier(.22, .8, .3, 1);
+    }
+    [data-theme="champagne"] body {
+      background-image: radial-gradient(ellipse at 20% 0%, rgba(232,180,160,.10), transparent 52%), radial-gradient(ellipse at 90% 100%, rgba(242,207,160,.06), transparent 46%);
+      background-attachment: fixed;
+    }
+    [data-theme="champagne"] h1, [data-theme="champagne"] h2, [data-theme="champagne"] h3, [data-theme="champagne"] .brand {
+      font-family: 'Cinzel', Georgia, serif; letter-spacing: .4px;
+    }
+    [data-theme="champagne"] .brand { font-weight: 800; letter-spacing: 2px; }
+    [data-theme="champagne"] .kpi-label, [data-theme="champagne"] th, [data-theme="champagne"] .filter-btn, [data-theme="champagne"] .settings-row-label {
+      letter-spacing: 1px; font-weight: 600;
+    }
+    [data-theme="champagne"] .ms-sidebar-item:not(.active), [data-theme="champagne"] #nav-items button:not(.active) {
+      color: var(--text-mute); font-weight: 500; letter-spacing: .2px;
+    }
+    [data-theme="champagne"] .kpi-value { font-family: 'Cinzel', Georgia, serif; font-weight: 700; }
+    [data-theme="champagne"] .card:has(.kpi-value) {
+      border-top: 2px solid var(--gold);
+      box-shadow: 0 6px 20px rgba(232,180,160, .07);
+    }
+    [data-theme="champagne"] .btn-primary, [data-theme="champagne"] .btn-gold {
+      background: linear-gradient(135deg, var(--gold), var(--pink-deep));
+      color: #1a0f10; font-weight: 700; text-shadow: none;
+    }
+    [data-theme="champagne"] .btn-ghost {
+      background: var(--bg-card2); border: 1px solid var(--border); color: var(--text);
+    }
+    [data-theme="champagne"] .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+    [data-theme="champagne"] .btn-danger {
+      background: linear-gradient(135deg, var(--red), #4f1722); color: #fbe9ec; font-weight: 700;
+    }
+    [data-theme="champagne"] a.linklike {
+      background: var(--bg-card2); border-color: var(--border); color: var(--pink);
+    }
+    [data-theme="champagne"] a.linklike:hover { border-color: var(--gold); color: var(--gold); background: var(--bg-card); }
+    [data-theme="champagne"] #app-shell.pos-left nav button.active, [data-theme="champagne"] #app-shell.pos-right nav button.active,
+    [data-theme="champagne"] .ms-sidebar-item.active {
+      background: rgba(232,180,160, .12); color: var(--gold);
+      border-left: 3px solid var(--gold); border-radius: 0 6px 6px 0;
+    }
+    [data-theme="champagne"] .ms-sidebar-item.active { padding-left: 8px; }
+    [data-theme="champagne"] nav button.active { background: var(--pink); color: #1a0f10; }
+    [data-theme="champagne"] :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+    [data-theme="champagne"] #vitrine-publique {
+      --vit-bg: #0b0708; --vit-bg2: #150e0f; --vit-or: #e8b4a0; --vit-or-vif: #f2cfa0;
+      --vit-brun: #4a3033; --vit-brun-clair: #8a5f5a; --vit-texte: #f7ebe4; --vit-texte-mute: #b9a198;
+    }
+
+    /* ===== Thème Lune Opale : nacre lunaire et reflets irisés ===== */
+    [data-theme="opale"] {
+      --bg: #060d12; --bg-panel: #0b161d; --bg-card: #101f29; --bg-card2: #162a36;
+      --border: #2b4a5a; --border-soft: #1c3340;
+      --text: #eaf5f6; --text-mute: #9fbac2; --text-faint: #66848e;
+      --pink: #9fe3d6; --pink-deep: #5fb9ab;
+      --gold: #f3dcef; --cyan: #8fd3f0;
+      --green: #7fdcb0; --red: #ee6b8a;
+      --anim-duree: .28s; --anim-easing: cubic-bezier(.22, .8, .3, 1);
+    }
+    [data-theme="opale"] body {
+      background-image: radial-gradient(ellipse at 12% -5%, rgba(159,227,214,.13), transparent 52%), radial-gradient(ellipse at 92% 105%, rgba(243,220,239,.08), transparent 46%);
+      background-attachment: fixed;
+    }
+    [data-theme="opale"] h1, [data-theme="opale"] h2, [data-theme="opale"] h3, [data-theme="opale"] .brand {
+      font-family: 'Cormorant Garamond', Georgia, serif; letter-spacing: .4px;
+    }
+    [data-theme="opale"] .brand { font-weight: 800; letter-spacing: 2px; }
+    [data-theme="opale"] .kpi-label, [data-theme="opale"] th, [data-theme="opale"] .filter-btn, [data-theme="opale"] .settings-row-label {
+      letter-spacing: 1px; font-weight: 600;
+    }
+    [data-theme="opale"] .ms-sidebar-item:not(.active), [data-theme="opale"] #nav-items button:not(.active) {
+      color: var(--text-mute); font-weight: 500; letter-spacing: .2px;
+    }
+    [data-theme="opale"] .kpi-value { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 700; }
+    [data-theme="opale"] .card:has(.kpi-value) {
+      border-top: 2px solid var(--gold);
+      box-shadow: 0 6px 20px rgba(159,227,214, .07);
+    }
+    [data-theme="opale"] .btn-primary, [data-theme="opale"] .btn-gold {
+      background: linear-gradient(135deg, var(--gold), var(--pink-deep));
+      color: #04161a; font-weight: 700; text-shadow: none;
+    }
+    [data-theme="opale"] .btn-ghost {
+      background: var(--bg-card2); border: 1px solid var(--border); color: var(--text);
+    }
+    [data-theme="opale"] .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+    [data-theme="opale"] .btn-danger {
+      background: linear-gradient(135deg, var(--red), #4f1730); color: #fff0f4; font-weight: 700;
+    }
+    [data-theme="opale"] a.linklike {
+      background: var(--bg-card2); border-color: var(--border); color: var(--pink);
+    }
+    [data-theme="opale"] a.linklike:hover { border-color: var(--gold); color: var(--gold); background: var(--bg-card); }
+    [data-theme="opale"] #app-shell.pos-left nav button.active, [data-theme="opale"] #app-shell.pos-right nav button.active,
+    [data-theme="opale"] .ms-sidebar-item.active {
+      background: rgba(159,227,214, .12); color: var(--gold);
+      border-left: 3px solid var(--gold); border-radius: 0 6px 6px 0;
+    }
+    [data-theme="opale"] .ms-sidebar-item.active { padding-left: 8px; }
+    [data-theme="opale"] nav button.active { background: var(--pink); color: #04161a; }
+    [data-theme="opale"] :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+    [data-theme="opale"] #vitrine-publique {
+      --vit-bg: #060d12; --vit-bg2: #0c1822; --vit-or: #9fe3d6; --vit-or-vif: #f3dcef;
+      --vit-brun: #2b4a5a; --vit-brun-clair: #5f8ea0; --vit-texte: #eaf5f6; --vit-texte-mute: #9fbac2;
+    }
+
 
     /* ===== Thème Unicorn : velours nuit, nacre et champagne =====
        Une seule extravagance : le logo, qui se nacre en irisé à l'ouverture. Le reste reste
@@ -2132,9 +2197,9 @@
               <div><div class="settings-row-label">Thème principal</div><div class="small">Appliqué par défaut à qui n'a pas choisi le sien.</div></div>
               <select id="master-theme-defaut" style="width:auto;">
                 <option value="unicorn">Unicorn</option>
-                <option value="leopolds">Unicorn Gold</option>
-                <option value="toutoule">Toutoule</option>
-                <option value="sandystrip">Sandy Strip</option>
+                <option value="nuitroyale">Nuit Royale</option>
+                <option value="champagne">Champagne Noir</option>
+                <option value="opale">Lune Opale</option>
                 <option value="clair">Clair</option>
               </select>
             </div>
@@ -3002,7 +3067,7 @@
         'dashboard.hideLeaderboard': 'Masquer le classement', 'dashboard.showLeaderboard': 'Afficher le classement',
         'settings.menuPosition': 'Position du menu', 'settings.theme': 'Thème', 'settings.language': 'Langue',
         'settings.left': 'Gauche', 'settings.right': 'Droite',
-        'theme.unicorn': 'Unicorn', 'theme.leopolds': 'Unicorn Gold', 'theme.clair': 'Clair', 'theme.sandystrip': 'Sandy Strip', 'theme.toutoule': 'Toutoule',
+        'theme.unicorn': 'Unicorn', 'theme.nuitroyale': 'Nuit Royale', 'theme.clair': 'Clair', 'theme.champagne': 'Champagne Noir', 'theme.opale': 'Lune Opale',
         'lang.fr': 'Français', 'lang.en': 'English', 'lang.es': 'Español', 'lang.it': 'Italiano',
         'login.identifiant': 'Identifiant', 'login.password': 'Mot de passe',
         'login.remember': 'Enregistrer mon identifiant', 'login.enter': 'Entrer'
@@ -3017,7 +3082,7 @@
         'dashboard.hideLeaderboard': 'Hide leaderboard', 'dashboard.showLeaderboard': 'Show leaderboard',
         'settings.menuPosition': 'Menu position', 'settings.theme': 'Theme', 'settings.language': 'Language',
         'settings.left': 'Left', 'settings.right': 'Right',
-        'theme.unicorn': 'Unicorn', 'theme.leopolds': 'Unicorn Gold', 'theme.clair': 'Light', 'theme.sandystrip': 'Sandy Strip', 'theme.toutoule': 'Toutoule',
+        'theme.unicorn': 'Unicorn', 'theme.nuitroyale': 'Nuit Royale', 'theme.clair': 'Light', 'theme.champagne': 'Champagne Noir', 'theme.opale': 'Lune Opale',
         'lang.fr': 'Français', 'lang.en': 'English', 'lang.es': 'Español', 'lang.it': 'Italiano',
         'login.identifiant': 'Username', 'login.password': 'Password',
         'login.remember': 'Remember my username', 'login.enter': 'Enter'
@@ -3032,7 +3097,7 @@
         'dashboard.hideLeaderboard': 'Ocultar clasificación', 'dashboard.showLeaderboard': 'Mostrar clasificación',
         'settings.menuPosition': 'Posición del menú', 'settings.theme': 'Tema', 'settings.language': 'Idioma',
         'settings.left': 'Izquierda', 'settings.right': 'Derecha',
-        'theme.unicorn': 'Unicorn', 'theme.leopolds': 'Unicorn Gold', 'theme.clair': 'Claro', 'theme.sandystrip': 'Sandy Strip', 'theme.toutoule': 'Toutoule',
+        'theme.unicorn': 'Unicorn', 'theme.nuitroyale': 'Nuit Royale', 'theme.clair': 'Claro', 'theme.champagne': 'Champagne Noir', 'theme.opale': 'Lune Opale',
         'lang.fr': 'Français', 'lang.en': 'English', 'lang.es': 'Español', 'lang.it': 'Italiano',
         'login.identifiant': 'Usuario', 'login.password': 'Contraseña',
         'login.remember': 'Recordar mi usuario', 'login.enter': 'Entrar'
@@ -3047,7 +3112,7 @@
         'dashboard.hideLeaderboard': 'Nascondi classifica', 'dashboard.showLeaderboard': 'Mostra classifica',
         'settings.menuPosition': 'Posizione del menu', 'settings.theme': 'Tema', 'settings.language': 'Lingua',
         'settings.left': 'Sinistra', 'settings.right': 'Destra',
-        'theme.unicorn': 'Unicorn', 'theme.leopolds': 'Unicorn Gold', 'theme.clair': 'Chiaro', 'theme.sandystrip': 'Sandy Strip', 'theme.toutoule': 'Toutoule',
+        'theme.unicorn': 'Unicorn', 'theme.nuitroyale': 'Nuit Royale', 'theme.clair': 'Chiaro', 'theme.champagne': 'Champagne Noir', 'theme.opale': 'Lune Opale',
         'lang.fr': 'Français', 'lang.en': 'English', 'lang.es': 'Español', 'lang.it': 'Italiano',
         'login.identifiant': 'Nome utente', 'login.password': 'Password',
         'login.remember': 'Ricorda il mio nome utente', 'login.enter': 'Entra'
@@ -3070,14 +3135,17 @@
       renderParametresLangueBoutons();
     }
 
-    const THEMES = [['unicorn', 'theme.unicorn'], ['leopolds', 'theme.leopolds'], ['sandystrip', 'theme.sandystrip'], ['clair', 'theme.clair'], ['toutoule', 'theme.toutoule']];
-    
+    const THEMES = [['unicorn', 'theme.unicorn'], ['nuitroyale', 'theme.nuitroyale'], ['champagne', 'theme.champagne'], ['opale', 'theme.opale'], ['clair', 'theme.clair']];
+    // Anciens thèmes retirés -> nouveau thème le plus proche (préférences déjà enregistrées).
+    const THEMES_ANCIENS = { leopolds: 'nuitroyale', sandystrip: 'champagne', toutoule: 'opale' };
+    function themeCanon_(t) { return (t && THEMES_ANCIENS[t]) || t; }
+
     const THEMES_APERCU = {
       unicorn: { bg: '#08060f', accent: '#cdb2ff', gold: '#ecd7a6', police: "'Cormorant Garamond', Georgia, serif", desc: 'Velours nuit et nacre' },
-      leopolds: { bg: '#000000', accent: '#e8b923', gold: '#ffcf40', police: "'Playfair Display', Georgia, serif", desc: 'Cabaret noir et or' },
-      sandystrip: { bg: '#17040e', accent: '#ff2d78', gold: '#ffcf4d', police: "'Bebas Neue', sans-serif", desc: 'Néon, club énergique' },
-      clair: { bg: '#f4f2f7', accent: '#e01d78', gold: '#b8790c', police: "'Manrope', sans-serif", desc: 'Sobre, lumineux' },
-      toutoule: { bg: '#170a2e', accent: '#a565f7', gold: '#a565f7', police: "'Manrope', sans-serif", desc: 'Midnight purple, contrasté' }
+      nuitroyale: { bg: '#050b1c', accent: '#e3c06c', gold: '#f0d58a', police: "'Playfair Display', Georgia, serif", desc: 'Bleu minuit et or royal' },
+      champagne: { bg: '#0b0708', accent: '#e8b4a0', gold: '#f2cfa0', police: "'Cinzel', Georgia, serif", desc: 'Noir velours et or rose' },
+      opale: { bg: '#060d12', accent: '#9fe3d6', gold: '#f3dcef', police: "'Cormorant Garamond', Georgia, serif", desc: 'Nacre lunaire et reflets irisés' },
+      clair: { bg: '#f4f2f7', accent: '#e01d78', gold: '#b8790c', police: "'Manrope', sans-serif", desc: 'Sobre, lumineux' }
     };
     function appliquerTheme(theme) {
       document.documentElement.setAttribute('data-theme', theme);
@@ -3226,7 +3294,7 @@
         let reglage = SONS_VENTE_DISPONIBLES[choix];
         const theme = document.documentElement.getAttribute('data-theme') || 'unicorn';
         if (!reglage) {
-          if (theme === 'sandystrip') reglage = { type: 'sawtooth', freq: 660, duree: 0.22, volume: 0.16 };
+          if (theme === 'champagne') reglage = { type: 'sawtooth', freq: 660, duree: 0.22, volume: 0.16 };
           else if (theme === 'clair') reglage = { type: 'sine', freq: 1200, duree: 0.1, volume: 0.08 };
           else reglage = { type: 'triangle', freq: 440, duree: 0.5, volume: 0.14 };
         }
@@ -3235,7 +3303,7 @@
         const gain = ctx.createGain();
         osc.type = reglage.type;
         osc.frequency.value = reglage.freq;
-        if (choix === 'auto' && theme === 'sandystrip') osc.frequency.exponentialRampToValueAtTime(reglage.freq * 1.5, ctx.currentTime + 0.08); 
+        if (choix === 'auto' && theme === 'champagne') osc.frequency.exponentialRampToValueAtTime(reglage.freq * 1.5, ctx.currentTime + 0.08); 
         gain.gain.setValueAtTime(reglage.volume, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + reglage.duree);
         osc.connect(gain); gain.connect(ctx.destination);
@@ -3572,7 +3640,7 @@
       }
       try {
         if (!localStorage.getItem('unicorn_theme') && data.themeParDefaut) {
-          document.documentElement.setAttribute('data-theme', data.themeParDefaut);
+          document.documentElement.setAttribute('data-theme', themeCanon_(data.themeParDefaut));
         }
       } catch (e) {  }
       if (CONNEXION_AUTO) {
@@ -3619,7 +3687,7 @@
     function restaurerThemePersonnel_() {
       let pref = null;
       try { pref = localStorage.getItem('unicorn_theme'); } catch (e) {  }
-      document.documentElement.setAttribute('data-theme', pref || (DATA && DATA.themeParDefaut) || 'unicorn');
+      document.documentElement.setAttribute('data-theme', themeCanon_(pref || (DATA && DATA.themeParDefaut)) || 'unicorn');
       demarrerRepereActionsDangereusesToutoule_();
     }
 
@@ -3650,7 +3718,7 @@
     }
     function afficherVitrinePublique() {
       masquerChargement();
-      document.documentElement.setAttribute('data-theme', DATA.themeVitrine || 'unicorn');
+      document.documentElement.setAttribute('data-theme', themeCanon_(DATA.themeVitrine) || 'unicorn');
       const nom = DATA.nomEntreprise || "UNICORN";
       document.getElementById('vitrine-brand').textContent = nom;
       document.title = nom;
@@ -4303,7 +4371,7 @@
     function renderThemeVitrineBoutons() {
       const el = document.getElementById('ms-theme-vitrine-boutons');
       if (!el) return;
-      const actuel = DATA.themeVitrine || 'unicorn';
+      const actuel = themeCanon_(DATA.themeVitrine) || 'unicorn';
       el.innerHTML = THEMES.map(th =>
         `<button class="filter-btn ${th[0] === actuel ? 'active' : ''}" onclick="definirThemeVitrine('${th[0]}')">${t(th[1])}</button>`
       ).join('');
@@ -8278,7 +8346,7 @@
       document.getElementById('master-nom-entreprise').value = DATA.nomEntreprise || '';
       document.getElementById('master-slogan').value = DATA.slogan || '';
       document.getElementById('master-devise').value = DATA.devise || '$';
-      document.getElementById('master-theme-defaut').value = DATA.themeParDefaut || 'sombre';
+      document.getElementById('master-theme-defaut').value = themeCanon_(DATA.themeParDefaut) || 'unicorn';
       document.getElementById('master-autologin').checked = !!DATA.autoLoginActif;
       document.getElementById('master-multi-succursales').checked = !!DATA.multiSuccursalesActif;
 
