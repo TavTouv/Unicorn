@@ -36,7 +36,7 @@
       // ============ CONFIGURATION UNICORN ============
       // Colle ici l'URL de TON déploiement Apps Script (celle qui finit par /exec).
       var URL_API_APPS_SCRIPT = localStorage.getItem('unicorn_api_url') ||
-        'https://script.google.com/macros/s/AKfycbwulZkiy50aInPxj8N__-8zjaCZi5VyOutnFDFfotAPsptDtmBZqIj_Sm7FU7Cyj4K1/exec';
+        'https://script.google.com/macros/s/AKfycbzbbQcaSg1wYwIYmHLAJYzGXP-OTgPrCdMy-w2PxbdbNjJ36AiE034S8SGJVTfb2xuX/exec';
       // ===============================================
 
       function construireChaineAppel(succesFn, echecFn) {
@@ -3532,6 +3532,7 @@
       google.script.run.withSuccessHandler(onDataLoaded).withFailureHandler(function (err) {
         masquerChargement();
         onError(err);
+        afficherErreurServeur_(err);
       }).getInitialData();
       applyI18n();
       try {
@@ -3539,6 +3540,29 @@
         if (saved) document.getElementById('login-identifiant').value = saved;
       } catch (e) {  }
     };
+
+    function afficherErreurServeur_(err) {
+      if (document.getElementById('erreur-serveur-ecran')) return;
+      var msg = (err && (err.message || String(err))) || 'Erreur inconnue';
+      var injoignable = /failed to fetch|networkerror|load failed/i.test(msg);
+      var ecran = document.createElement('div');
+      ecran.id = 'erreur-serveur-ecran';
+      ecran.style.cssText = 'position:fixed;inset:0;z-index:3000;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg);overflow:auto;';
+      ecran.innerHTML =
+        '<div class="card" style="max-width:520px;width:100%;text-align:left;">' +
+        '<h2 style="margin-top:0;">' + (injoignable ? 'Serveur injoignable' : 'Le serveur a renvoyé une erreur') + '</h2>' +
+        '<div class="small" style="margin-bottom:12px;">' + escapeHtml(msg) + '</div>' +
+        (injoignable
+          ? '<div class="small" style="line-height:1.6;">La page n\'arrive pas à joindre ton Apps Script. Vérifie :<br>' +
+            '1. Déployer &gt; Gérer les déploiements : « Exécuter en tant que » = <b>Moi</b> et « Qui a accès » = <b>Tout le monde</b>.<br>' +
+            '2. Que l\'URL <b>/exec</b> collée dans index.html est celle du déploiement actif (et non d\'un ancien).<br>' +
+            '3. Dans Apps Script &gt; <b>Exécutions</b> : si une exécution est en échec, son message indique la cause.<br>' +
+            '4. Qu\'il n\'y a pas de limite de quota atteinte (attends quelques minutes puis réessaie).</div>'
+          : '') +
+        '<button class="btn-gold" style="margin-top:16px;" onclick="location.reload()">Réessayer</button>' +
+        '</div>';
+      document.body.appendChild(ecran);
+    }
 
     function onDataLoaded(data) {
       DATA = data;
