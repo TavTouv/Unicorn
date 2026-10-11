@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html data-theme="unicorn">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
@@ -26,7 +26,8 @@
         __savedTheme = __anciens[__savedTheme];
         localStorage.setItem('unicorn_theme', __savedTheme);
       }
-      document.documentElement.setAttribute('data-theme', __savedTheme || 'unicorn');
+      if (['unicorn', 'nuitroyale', 'champagne', 'opale', 'clair'].indexOf(__savedTheme) === -1) __savedTheme = 'unicorn';
+      document.documentElement.setAttribute('data-theme', __savedTheme);
     } catch (e) {  }
   </script>
   <script>
@@ -3571,7 +3572,12 @@
     const THEMES = [['unicorn', 'theme.unicorn'], ['nuitroyale', 'theme.nuitroyale'], ['champagne', 'theme.champagne'], ['opale', 'theme.opale'], ['clair', 'theme.clair']];
     // Anciens thèmes retirés -> nouveau thème le plus proche (préférences déjà enregistrées).
     const THEMES_ANCIENS = { leopolds: 'nuitroyale', sandystrip: 'champagne', toutoule: 'opale' };
-    function themeCanon_(t) { return (t && THEMES_ANCIENS[t]) || t; }
+    const THEMES_VALIDES_ = ['unicorn', 'nuitroyale', 'champagne', 'opale', 'clair'];
+    // Tout thème inconnu ou ancien ('sombre', 'minuit'...) retombe sur Unicorn : jamais de thème "sans couleurs".
+    function themeCanon_(t) {
+      const c = (t && THEMES_ANCIENS[t]) || t;
+      return THEMES_VALIDES_.indexOf(c) !== -1 ? c : 'unicorn';
+    }
 
     const THEMES_APERCU = {
       unicorn: { bg: '#08060f', accent: '#cdb2ff', gold: '#ecd7a6', police: "'Cormorant Garamond', Georgia, serif", desc: 'Velours nuit et nacre' },
