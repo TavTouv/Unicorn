@@ -493,50 +493,103 @@
     .carte-plat-desc { font-style: italic; font-size: 13px; color: var(--text-mute); margin-top: 4px; line-height: 1.5; }
     
     .carte-entete { text-align: center; margin-bottom: 28px; }
-    /* Grille des cartes : hauteur égale par rangée, dernière rangée centrée */
-    .carte-grille { display: flex; flex-wrap: wrap; justify-content: center; align-items: stretch; gap: 28px; }
+    /* ===== Cartes du menu : cadres ornés (velours nuit + or/nacre du thème) ===== */
+    .carte-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+    .carte-grille {
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 34px;
+      grid-auto-rows: 1fr; align-items: stretch;
+    }
     #vitrine-page-carte .carte-grille .carte-cadre {
-      flex: 0 0 auto; width: calc((100% - 56px) / 3); max-width: none; margin: 0; box-sizing: border-box;
-      display: flex; flex-direction: column; padding: 34px 30px 30px;
-      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0) 45%);
+      grid-column: span 2; max-width: none; width: auto; margin: 0; box-sizing: border-box;
+      position: relative; display: flex; flex-direction: column; text-align: center;
+      padding: 12px 0 56px; border-radius: 0; border: 2px solid transparent;
+      border-image: linear-gradient(135deg, var(--gold), var(--pink), var(--gold), var(--pink-deep), var(--gold)) 1;
+      background:
+        radial-gradient(ellipse at 18% 0%, rgba(143,106,224,.13), transparent 55%),
+        radial-gradient(ellipse at 92% 100%, rgba(236,215,166,.07), transparent 50%),
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
+        var(--bg-panel);
+      box-shadow: inset 0 0 0 7px var(--bg-panel), inset 0 0 0 8px rgba(236,215,166,.45), 0 8px 28px rgba(0,0,0,.35);
       transition: transform .25s ease, box-shadow .25s ease;
     }
-    .carte-grille .carte-cadre:hover {
+    #vitrine-page-carte .carte-grille .carte-cadre:hover {
       transform: translateY(-3px);
-      box-shadow: inset 0 0 0 6px var(--bg), inset 0 0 0 8px var(--gold), 0 10px 34px rgba(0,0,0,.45);
+      box-shadow: inset 0 0 0 7px var(--bg-panel), inset 0 0 0 8px rgba(236,215,166,.6), 0 14px 38px rgba(0,0,0,.5);
     }
-    .carte-cat-tete { text-align: center; }
-    .carte-cat-badge {
-      width: 58px; height: 58px; margin: 0 auto 12px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; font-size: 26px;
-      border: 1px solid var(--gold); background: rgba(255,255,255,.04);
-      box-shadow: 0 0 0 4px rgba(255,255,255,.03), 0 0 18px rgba(255,255,255,.05);
+    /* Dernière rangée centrée, quel que soit le nombre de cartes */
+    #vitrine-page-carte .carte-grille .carte-cadre:last-child:nth-child(3n+1) { grid-column: 3 / span 2; }
+    #vitrine-page-carte .carte-grille .carte-cadre:nth-last-child(2):nth-child(3n+1) { grid-column: 2 / span 2; }
+    #vitrine-page-carte .carte-grille .carte-cadre:last-child:nth-child(3n+2) { grid-column: 4 / span 2; }
+
+    /* Ornements d'angle et de pied */
+    .carte-coin { position: absolute; width: 66px; height: 66px; pointer-events: none; }
+    .carte-coin.hg { top: 3px; left: 3px; }
+    .carte-coin.hd { top: 3px; right: 3px; transform: scaleX(-1); }
+    .carte-coin.bg { bottom: 3px; left: 3px; transform: scaleY(-1); }
+    .carte-coin.bd { bottom: 3px; right: 3px; transform: scale(-1, -1); }
+    .carte-pied { position: absolute; left: 50%; bottom: 14px; width: 170px; height: 28px; transform: translateX(-50%) scaleY(-1); pointer-events: none; }
+
+    /* Titre dans un cadre double, ornements haut et bas */
+    .carte-cat-tete { padding: 24px 62px 0; }
+    .carte-cat-boite {
+      --g: var(--gold); --gi: rgba(236,215,166,.42); --trou: 112px;
+      position: relative; padding: 20px 12px 16px;
+      background:
+        linear-gradient(90deg, var(--g) calc(50% - var(--trou)), transparent calc(50% - var(--trou)) calc(50% + var(--trou)), var(--g) calc(50% + var(--trou))) 0 0 / 100% 1.5px no-repeat,
+        linear-gradient(90deg, var(--g) calc(50% - var(--trou)), transparent calc(50% - var(--trou)) calc(50% + var(--trou)), var(--g) calc(50% + var(--trou))) 0 100% / 100% 1.5px no-repeat,
+        linear-gradient(90deg, var(--gi) calc(50% - var(--trou)), transparent calc(50% - var(--trou)) calc(50% + var(--trou)), var(--gi) calc(50% + var(--trou))) 0 6px / 100% 1px no-repeat,
+        linear-gradient(90deg, var(--gi) calc(50% - var(--trou)), transparent calc(50% - var(--trou)) calc(50% + var(--trou)), var(--gi) calc(50% + var(--trou))) 0 calc(100% - 6px) / 100% 1px no-repeat,
+        linear-gradient(var(--g), var(--g)) 0 0 / 1.5px 100% no-repeat,
+        linear-gradient(var(--g), var(--g)) 100% 0 / 1.5px 100% no-repeat,
+        linear-gradient(var(--gi), var(--gi)) 6px 0 / 1px 100% no-repeat,
+        linear-gradient(var(--gi), var(--gi)) calc(100% - 6px) 0 / 1px 100% no-repeat;
     }
-    .carte-cat-titre { font-family: 'Playfair Display', Georgia, serif; font-weight: 800; font-size: 25px; color: var(--gold); letter-spacing: 4px; text-transform: uppercase; line-height: 1.2; }
-    .carte-cat-compte { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-mute); margin-top: 6px; opacity: .85; }
-    .carte-grille .carte-diviseur { margin: 16px 0 18px; }
-    .carte-cat-liste { flex: 1; text-align: left; }
-    .carte-grille .carte-plat { margin-bottom: 15px; }
-    .carte-grille .carte-plat:last-child { margin-bottom: 0; }
+    .carte-cat-boite::before, .carte-cat-boite::after {
+      content: ''; position: absolute; left: 6px; right: 6px; height: 0; pointer-events: none;
+    }
+    .carte-boite-orn { position: absolute; left: 50%; width: 200px; height: 26px; transform: translateX(-50%); }
+    .carte-boite-orn.haut { top: -13px; }
+    .carte-boite-orn.bas { bottom: -13px; transform: translateX(-50%) scaleY(-1); }
+    .carte-cat-icone { font-size: 22px; line-height: 1; margin-bottom: 6px; }
+    .carte-cat-titre {
+      font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif; font-weight: 600; font-size: 38px;
+      letter-spacing: 2px; text-transform: none; line-height: 1.1;
+      background: linear-gradient(120deg, var(--pink-deep) 0%, var(--gold) 28%, var(--text) 50%, var(--gold) 72%, var(--pink) 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent;
+    }
+    .carte-cat-compte { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-mute); margin-top: 8px; }
+
+    /* Lignes du menu : nom à gauche, prix aligné à droite */
+    .carte-cat-liste { flex: 1; display: flex; flex-direction: column; text-align: left; padding: 22px 34px 0; }
+    .carte-grille .carte-plat { flex: 1 1 0; display: flex; flex-direction: column; justify-content: center; padding: 6px 4px; margin: 0; border-top: 1px solid rgba(236,215,166,.12); }
+    .carte-grille .carte-plat:first-child { border-top: none; }
     .carte-plat-ligne { display: flex; align-items: baseline; gap: 8px; }
-    .carte-plat-ligne .carte-plat-nom { font-size: 17px; line-height: 1.3; }
-    .carte-plat-points { flex: 1; min-width: 14px; border-bottom: 1px dotted var(--gold); opacity: .35; transform: translateY(-3px); }
-    .carte-plat-ligne .carte-plat-prix { margin-left: 0; font-size: 16px; font-weight: 700; white-space: nowrap; }
-    .carte-grille .carte-plat-desc { margin-top: 3px; font-size: 13px; padding-right: 36px; }
+    .carte-plat-ligne .carte-plat-nom { font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif; font-size: 21px; font-weight: 700; line-height: 1.25; color: var(--text); }
+    .carte-plat-points { flex: 1; min-width: 14px; border-bottom: 1px dotted var(--gold); opacity: .4; transform: translateY(-4px); }
+    .carte-plat-ligne .carte-plat-prix { margin-left: 0; font-size: 17px; font-weight: 700; color: var(--gold); white-space: nowrap; }
+    .carte-grille .carte-plat-desc { margin-top: 1px; font-size: 13.5px; color: var(--text-mute); padding-right: 40px; }
+
     @media (max-width: 1100px) {
-      #vitrine-page-carte .carte-grille .carte-cadre { width: calc((100% - 28px) / 2); }
+      .carte-grille { grid-template-columns: repeat(2, 1fr); }
+      #vitrine-page-carte .carte-grille .carte-cadre,
+      #vitrine-page-carte .carte-grille .carte-cadre:last-child:nth-child(n),
+      #vitrine-page-carte .carte-grille .carte-cadre:nth-last-child(2):nth-child(n) { grid-column: auto; }
+      #vitrine-page-carte .carte-grille .carte-cadre:last-child:nth-child(odd) { grid-column: 1 / -1; width: calc(50% - 17px); justify-self: center; }
     }
     @media (max-width: 720px) {
-      #vitrine-page-carte .carte-grille .carte-cadre { width: 100%; padding: 28px 20px 24px; }
-      .carte-grille .carte-cadre:hover { transform: none; }
+      .carte-grille { grid-template-columns: 1fr; grid-auto-rows: auto; gap: 26px; }
+      #vitrine-page-carte .carte-grille .carte-cadre:last-child:nth-child(odd) { grid-column: auto; width: auto; justify-self: stretch; }
+      .carte-cat-tete { padding: 26px 52px 0; }
+      .carte-cat-liste { padding: 26px 26px 0; }
+      .carte-cat-titre { font-size: 34px; }
+      #vitrine-page-carte .carte-grille .carte-cadre:hover { transform: none; }
     }
-
-    .billet-carte { background: var(--bg-panel); padding: 32px 28px; text-align: center; border-bottom: 2px solid var(--gold); }
     
     .coupon-carte { background: var(--bg-panel); border: 2px solid var(--gold); border-radius: 10px; padding: 28px 24px; text-align: center; }
     .coupon-statut { font-family: 'Playfair Display', Georgia, serif; font-size: 22px; font-weight: 800; margin: 8px 0; }
     .coupon-diviseur { border-top: 1px dashed var(--border); margin: 16px 0; }
     
+
     .horaires-statut-hero { max-width: 560px; margin: 0 auto 24px; text-align: center; padding: 22px; border-radius: 10px; border: 2px solid var(--gold); }
     .horaires-statut-point { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; vertical-align: middle; }
     .horaires-statut-texte { font-family: 'Playfair Display', Georgia, serif; font-size: 20px; font-weight: 800; vertical-align: middle; }
@@ -983,6 +1036,41 @@
           <div class="carte-sous-titre">Cartes &amp; Menus</div>
           <div class="carte-diviseur">◆</div>
         </div>
+        <svg class="carte-defs" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="gOrCoin" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="120" y2="120">
+              <stop offset="0" style="stop-color:var(--gold)"/><stop offset=".5" style="stop-color:var(--pink)"/><stop offset="1" style="stop-color:var(--gold)"/>
+            </linearGradient>
+            <linearGradient id="gOrHaut" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="260" y2="0">
+              <stop offset="0" style="stop-color:var(--pink-deep)"/><stop offset=".5" style="stop-color:var(--gold)"/><stop offset="1" style="stop-color:var(--pink-deep)"/>
+            </linearGradient>
+            <symbol id="orn-coin" viewBox="0 0 120 120" fill="none" stroke="url(#gOrCoin)" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 3 H84 M3 3 V84" stroke-width="2.6"/>
+              <path d="M9 9 H46 M9 9 V46" stroke-width="1" opacity=".75"/>
+              <path d="M19 19 C19 8 36 8 36 20 C36 30 23 32 22 23 C21.5 18.5 27 18 28.5 21.5" stroke-width="2"/>
+              <path d="M40 12 C51 4 64 9 68 18 C57 22 46 20 40 12 Z" stroke-width="1.5"/>
+              <path d="M12 40 C4 51 9 64 18 68 C22 57 20 46 12 40 Z" stroke-width="1.5"/>
+              <path d="M36 36 C47 36 52 47 45 53 C40 57 33 52 37 47" stroke-width="1.6"/>
+              <path d="M70 12 C76 8 82 10 84 14 M12 70 C8 76 10 82 14 84" stroke-width="1.4"/>
+              <circle cx="27" cy="27" r="1.7" fill="url(#gOrCoin)" stroke="none"/>
+              <circle cx="88" cy="3" r="2" fill="url(#gOrCoin)" stroke="none"/>
+              <circle cx="3" cy="88" r="2" fill="url(#gOrCoin)" stroke="none"/>
+            </symbol>
+            <g id="orn-demi" fill="none" stroke="url(#gOrHaut)" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M121 17 C108 17 104 6 92 6 C82 6 78 14 84 18 C88 21 93 18 91 14" stroke-width="1.7"/>
+              <path d="M121 17 C108 17 104 28 92 28 C82 28 78 20 84 16" stroke-width="1.7"/>
+              <path d="M92 6 C80 3 70 10 60 10 C48 10 44 5 30 7 C22 8 16 12 8 12" stroke-width="1.4"/>
+              <path d="M92 28 C80 31 70 24 60 24 C48 24 44 29 30 27 C22 26 16 22 8 22" stroke-width="1.4"/>
+              <circle cx="8" cy="17" r="1.6" fill="url(#gOrHaut)" stroke="none"/>
+            </g>
+            <symbol id="orn-haut" viewBox="0 0 260 34" fill="none" stroke="url(#gOrHaut)" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M130 3 L138 17 L130 31 L122 17 Z" stroke-width="1.7"/>
+              <circle cx="130" cy="17" r="2.2" fill="url(#gOrHaut)" stroke="none"/>
+              <use href="#orn-demi"/>
+              <use href="#orn-demi" transform="matrix(-1 0 0 1 260 0)"/>
+            </symbol>
+          </defs>
+        </svg>
         <div class="carte-grille" id="vitrine-menu"></div>
       </div>
 
@@ -3816,12 +3904,19 @@
       document.getElementById('vitrine-menu').innerHTML = cartesVisibles.length
         ? cartesVisibles.map(c => `
             <div class="carte-cadre">
+              <svg class="carte-coin hg" aria-hidden="true"><use href="#orn-coin"/></svg>
+              <svg class="carte-coin hd" aria-hidden="true"><use href="#orn-coin"/></svg>
+              <svg class="carte-coin bg" aria-hidden="true"><use href="#orn-coin"/></svg>
+              <svg class="carte-coin bd" aria-hidden="true"><use href="#orn-coin"/></svg>
               <div class="carte-cat-tete">
-                <div class="carte-cat-badge">${c.icone}</div>
-                <div class="carte-cat-titre">${escapeHtml(c.titre)}</div>
-                <div class="carte-cat-compte">${c.items.length} ${c.items.length > 1 ? 'créations' : 'création'}</div>
+                <div class="carte-cat-boite">
+                  <svg class="carte-boite-orn haut" aria-hidden="true"><use href="#orn-haut"/></svg>
+                  <div class="carte-cat-icone">${c.icone}</div>
+                  <div class="carte-cat-titre">${escapeHtml(c.titre)}</div>
+                  <div class="carte-cat-compte">${c.items.length} ${c.items.length > 1 ? 'créations' : 'création'}</div>
+                  <svg class="carte-boite-orn bas" aria-hidden="true"><use href="#orn-haut"/></svg>
+                </div>
               </div>
-              <div class="carte-diviseur">◆</div>
               <div class="carte-cat-liste">
                 ${c.items.map(a => `
                   <div class="carte-plat">
@@ -3832,6 +3927,7 @@
                     ${a.Notes ? '<div class="carte-plat-desc">' + escapeHtml(a.Notes) + '</div>' : ''}
                   </div>`).join('')}
               </div>
+              <svg class="carte-pied" aria-hidden="true"><use href="#orn-haut"/></svg>
             </div>`).join('')
         : '<div class="small mt16" style="grid-column:1/-1;text-align:center;">La carte arrive bientôt.</div>';
 
