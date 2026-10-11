@@ -679,7 +679,15 @@
       -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent;
     }
     .orne-sous { font-style: italic; color: var(--text-mute); margin-top: 8px; font-size: 17px; }
-    .orne-texte { font-size: 19px; line-height: 1.7; color: var(--text); text-align: center; }
+    .orne-texte { font-size: 19px; line-height: 1.75; color: var(--text); text-align: center; }
+    .orne-texte p { margin: 0 0 20px; }
+    .orne-texte p:first-child { font-size: 23px; line-height: 1.55; color: var(--gold); font-style: italic; }
+    .orne-texte p:last-child:not(:first-child) {
+      margin: 30px 0 0; padding-top: 22px; position: relative; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 25px; font-weight: 700; letter-spacing: 1px;
+      background: linear-gradient(120deg, var(--pink-deep), var(--gold) 30%, var(--text) 50%, var(--gold) 70%, var(--pink));
+      -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent;
+    }
+    .orne-texte p:last-child:not(:first-child)::before { content: ''; position: absolute; top: 0; left: 50%; width: 120px; height: 1px; transform: translateX(-50%); background: linear-gradient(90deg, transparent, var(--gold), transparent); }
 
     /* Horaires */
     #vitrine-publique .horaires-statut-hero {
@@ -1322,7 +1330,7 @@
           <div class="orne-cadre">
             <svg class="carte-coin hg" aria-hidden="true"><use href="#orn-coin"/></svg><svg class="carte-coin hd" aria-hidden="true"><use href="#orn-coin"/></svg><svg class="carte-coin bg" aria-hidden="true"><use href="#orn-coin"/></svg><svg class="carte-coin bd" aria-hidden="true"><use href="#orn-coin"/></svg>
             <div class="orne-entete"><svg class="orne-orn" aria-hidden="true"><use href="#orn-haut"/></svg><h2 class="orne-titre">À propos</h2><div class="orne-sous">Notre histoire</div></div>
-            <div class="orne-texte" id="vitrine-apropos" style="white-space:pre-line;"></div>
+            <div class="orne-texte" id="vitrine-apropos"></div>
             <svg class="orne-pied" aria-hidden="true"><use href="#orn-haut"/></svg>
           </div>
         </div>
@@ -4230,7 +4238,9 @@
       if (contactDisponible) document.getElementById('vitrine-contact').textContent = DATA.infoPublique;
 
       const aproposDisponible = !!DATA.apropos;
-      document.getElementById('vitrine-apropos').textContent = DATA.apropos || 'À venir.';
+      document.getElementById('vitrine-apropos').innerHTML = String(DATA.apropos || 'À venir.')
+        .split(/\n\s*\n/).map(t => t.trim()).filter(Boolean)
+        .map(t => '<p>' + escapeHtml(t).replace(/\n/g, '<br>') + '</p>').join('');
 
       const estClientConnecte = !!CURRENT_USER && CURRENT_USER.typeCompte === 'client';
       const pageClientActive = DATA.pageClientActive !== false;
