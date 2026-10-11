@@ -3774,7 +3774,9 @@
         
         chat: { freqs: [880, 1046], type: 'triangle', ecart: 0.06, duree: 0.14, volume: 0.11 },
         
-        rh: { freqs: [392, 494], type: 'square', ecart: 0.14, duree: 0.22, volume: 0.09 }
+        rh: { freqs: [392, 494], type: 'square', ecart: 0.14, duree: 0.22, volume: 0.09 },
+        
+        compteClient: { freqs: [1568, 2349, 3136], type: 'sine', ecart: 0, duree: 1.1, volume: 0.13 }
       };
       const reglage = REGLAGES[categorie] || { freqs: [660, 880], type: 'sine', ecart: 0.12, duree: 0.3, volume: 0.18 };
       try {
@@ -3818,6 +3820,7 @@
     }
     let DERNIER_NB_ABSENCES_ATTENTE = null;
     let DERNIER_NB_RESA_ATTENTE = null;
+    let DERNIERE_DATE_COMPTE_CLIENT = null;
     
     const DataStore = {
       heartbeat: function (onResult) {
@@ -3850,6 +3853,16 @@
             document.getElementById('nouvelle-resa-modal').classList.remove('hidden');
           }
           DERNIER_NB_RESA_ATTENTE = resultat.reservationsEnAttente;
+        }
+        if (CURRENT_USER.typeCompte !== 'client' && resultat.dernierCompteClient && resultat.dernierCompteClient.date) {
+          const dateCompte = new Date(resultat.dernierCompteClient.date).getTime();
+          if (DERNIERE_DATE_COMPTE_CLIENT !== null && dateCompte > DERNIERE_DATE_COMPTE_CLIENT) {
+            jouerSonNotification('compteClient');
+            showToast('Nouveau compte client : ' + (resultat.dernierCompteClient.nom || 'sans nom'));
+          }
+          DERNIERE_DATE_COMPTE_CLIENT = Math.max(DERNIERE_DATE_COMPTE_CLIENT || 0, dateCompte);
+        } else if (CURRENT_USER.typeCompte !== 'client' && DERNIERE_DATE_COMPTE_CLIENT === null) {
+          DERNIERE_DATE_COMPTE_CLIENT = 0;
         }
         if (ROLES_PATRON_.indexOf(CURRENT_USER['Rôle']) !== -1) {
           const enAttente = resultat.absences.filter(a => a.Statut === 'En attente').length;
