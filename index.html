@@ -1439,13 +1439,13 @@
         <label>Identifiant souhaité</label>
         <input id="inscription-identifiant" placeholder="prenom.nom">
         <label class="mt10">Mot de passe</label>
-        <div class="password-wrap"><input id="inscription-pwd" type="password" placeholder="4 caractères minimum">
+        <div class="password-wrap"><input id="inscription-pwd" type="password" placeholder="6 caractères minimum">
         <button type="button" class="eye-btn" onclick="togglePasswordVisibility('inscription-pwd', this)">Afficher</button></div>
         <label class="mt10">Nom</label>
         <input id="inscription-nom" placeholder="Ton nom">
-        <label class="mt10">Prénom <span class="small">(facultatif)</span></label>
+        <label class="mt10">Prénom</label>
         <input id="inscription-prenom" placeholder="Ton prénom">
-        <label class="mt10">Téléphone <span class="small">(facultatif)</span></label>
+        <label class="mt10">Téléphone</label>
         <input id="inscription-telephone" placeholder="Ex: 555-0192">
         <button class="btn-primary btn-block mt16" onclick="creerCompteClientUI()">Créer mon compte</button>
         <div class="err" id="inscription-err"></div>
@@ -4565,7 +4565,8 @@
       const telephone = document.getElementById('inscription-telephone').value.trim();
       const errEl = document.getElementById('inscription-err');
       errEl.textContent = '';
-      if (!identifiant || !pwd || !nom) { errEl.textContent = 'Identifiant, mot de passe et nom sont obligatoires.'; return; }
+      if (!identifiant || !pwd || !nom || !prenom || !telephone) { errEl.textContent = 'Tous les champs sont obligatoires : identifiant, mot de passe, nom, prénom et téléphone.'; return; }
+      if (pwd.length < 6) { errEl.textContent = 'Le mot de passe doit faire au moins 6 caractères.'; return; }
       INSCRIPTION_CLIENT_EN_COURS = true;
       afficherChargement('Création du compte...');
       google.script.run.withSuccessHandler(function () {
