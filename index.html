@@ -715,6 +715,39 @@
     #vitrine-page-reserver .btn-primary { background: linear-gradient(135deg, var(--gold), color-mix(in srgb, var(--gold) 60%, #000)); color: var(--bg) !important; border: none; border-radius: 0; font-family: 'Cinzel', serif; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; padding: 14px; box-shadow: 0 6px 20px rgba(0,0,0,.35); }
     #vitrine-page-reserver .btn-primary:hover { filter: brightness(1.1); }
     #vitrine-page-reserver .btn-ghost { border-radius: 0; }
+    /* Précommande dans le formulaire de réservation */
+    .resa-precmd { border: 1px solid rgba(236,215,166,.35); background: rgba(0,0,0,.18); }
+    .resa-precmd-toggle { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 13px 14px; background: transparent; border: none; color: var(--text); cursor: pointer; text-align: left; font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; }
+    .resa-precmd-toggle small { text-transform: none; letter-spacing: 0; font-family: inherit; color: var(--text-mute); }
+    .resa-precmd-toggle::after { content: '＋'; color: var(--gold); font-size: 18px; margin-left: 4px; }
+    .resa-precmd-toggle.ouvert::after { content: '−'; }
+    .resa-precmd-resume { margin-left: auto; font-size: 12px; letter-spacing: 1px; color: var(--gold); text-transform: none; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 700; }
+    .resa-precmd-corps { padding: 0 12px 14px; }
+    .resa-precmd-onglets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+    .resa-onglet { background: transparent; border: 1px solid rgba(236,215,166,.3); color: var(--text-mute); padding: 6px 11px; font-size: 12px; cursor: pointer; border-radius: 0; font-family: 'Cinzel', serif; letter-spacing: 1px; }
+    .resa-onglet.actif { background: linear-gradient(135deg, var(--gold), color-mix(in srgb, var(--gold) 60%, #000)); color: var(--bg); border-color: transparent; }
+    .resa-onglet b { color: inherit; }
+    .resa-precmd-liste { max-height: 300px; overflow-y: auto; padding-right: 4px; }
+    .resa-article { display: flex; align-items: center; gap: 10px; padding: 9px 4px; border-bottom: 1px solid rgba(236,215,166,.12); }
+    .resa-article.choisi { background: rgba(236,215,166,.07); }
+    .resa-article-nom { flex: 1; min-width: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 700; font-size: 18px; line-height: 1.2; }
+    .resa-article-nom small { display: block; font-weight: 400; font-style: italic; font-size: 13px; color: var(--text-mute); }
+    .resa-article-prix { color: var(--gold); font-weight: 700; white-space: nowrap; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 17px; }
+    .resa-qte { display: flex; align-items: center; gap: 6px; }
+    .resa-qte button { width: 28px; height: 28px; padding: 0; border-radius: 0; background: transparent; border: 1px solid var(--gold); color: var(--gold); cursor: pointer; font-size: 16px; line-height: 1; }
+    .resa-qte button:disabled { opacity: .3; cursor: default; }
+    .resa-qte span { min-width: 20px; text-align: center; font-weight: 700; }
+    .resa-precmd-total { margin-top: 10px; text-align: center; font-size: 15px; color: var(--text); }
+    .resa-precmd-total small { color: var(--text-mute); }
+    #vitrine-publique .coupon-commande { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(236,215,166,.2); text-align: left; font-size: 15px; }
+
+    /* Bloc "Devenir VIP" sur la page Réserver */
+    .vip-resa { text-align: left !important; }
+    .vip-resa-titre { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 700; font-size: 26px; letter-spacing: 3px; text-transform: uppercase; text-align: center; margin-bottom: 4px;
+      background: linear-gradient(120deg, var(--pink-deep), var(--gold) 30%, var(--text) 50%, var(--gold) 70%, var(--pink)); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+    .vip-resa .small.mb10 { text-align: center; }
+    .vip-resa-statut { padding: 9px 12px; margin-bottom: 10px; font-size: 14px; border-left: 3px solid var(--gold); background: rgba(236,215,166,.07); }
+    .vip-resa-statut.ok { border-color: var(--green); } .vip-resa-statut.refus { border-color: var(--red); }
     #vitrine-publique .coupon-statut { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 30px; letter-spacing: 3px; text-transform: uppercase; }
     #vitrine-publique .coupon-diviseur { border-top: 1px solid rgba(236,215,166,.2); }
 
@@ -1315,11 +1348,25 @@
             <input id="resa-nb" type="number" min="1" max="8" value="2" oninput="clamperNbPersonnesResa_(this)">
             <label class="mt10">Commentaire <span class="small">(facultatif)</span></label>
             <textarea id="resa-commentaire" rows="2" placeholder="Occasion spéciale, préférences..."></textarea>
+            <div class="resa-precmd mt16">
+              <button type="button" class="resa-precmd-toggle" id="resa-precmd-toggle" onclick="basculerPrecommandeResa_()">
+                <span class="resa-precmd-titre">Précommander mes plats &amp; boissons <small>(facultatif)</small></span>
+                <span class="resa-precmd-resume" id="resa-precmd-resume">Aucun article</span>
+              </button>
+              <div class="resa-precmd-corps hidden" id="resa-precmd-corps">
+                <div class="resa-precmd-onglets" id="resa-precmd-onglets"></div>
+                <div class="resa-precmd-liste" id="resa-precmd-liste"></div>
+                <div class="resa-precmd-total" id="resa-precmd-total"></div>
+              </div>
+            </div>
             <button class="btn-primary btn-block mt16" id="resa-submit-btn" onclick="envoyerReservationUI()">Envoyer la demande</button>
             <button class="btn-ghost btn-block mt10 hidden" id="resa-annuler-modif-btn" onclick="annulerModifReservationUI()">Annuler la modification</button>
             <div class="err" id="resa-err"></div>
           </div>
-          <div id="reserver-coupon"></div>
+          <div>
+            <div id="reserver-coupon"></div>
+            <div id="reserver-vip" class="mt16"></div>
+          </div>
         </div>
         </div>
 
@@ -1688,6 +1735,15 @@
               <button class="btn-primary btn-block mt16" onclick="activerVipDepuisVentes()">Activer le VIP</button>
               <div class="err" id="ventes-vip-err"></div>
               <div class="small mt10">Si le client est déjà VIP, son abonnement est renouvelé avec l'offre choisie.</div>
+            </div>
+          </div>
+          <div class="card mt16">
+            <h2 style="margin:0 0 10px;">Demandes VIP <span class="small" id="ventes-vip-demandes-compte"></span></h2>
+            <div style="overflow-x:auto;">
+              <table>
+                <thead><tr><th>Client</th><th>Téléphone</th><th>Offre demandée</th><th>Date</th><th>Statut</th><th></th></tr></thead>
+                <tbody id="ventes-vip-demandes"><tr><td colspan="6" class="small">Chargement...</td></tr></tbody>
+              </table>
             </div>
           </div>
           <div class="card mt16">
@@ -4338,6 +4394,7 @@
 
     function enterEspaceClient() {
       document.getElementById('app').style.display = 'none';
+      document.getElementById('login-screen').classList.add('hidden');
       afficherVitrinePublique();
     }
     let RESA_MODE = 'creation';
@@ -4346,8 +4403,11 @@
         DATA.statutReservation = statut;
         renderStatutReservation_();
       }).withFailureHandler(function () {}).getStatutReservationClient(CURRENT_USER.sessionToken);
+      chargerStatutVipClient_();
     }
     function renderStatutReservation_() {
+      renderPrecommandeResa_();
+      renderDemandeVipClient_();
       const estConnecte = !!CURRENT_USER;
       const couponEl = document.getElementById('reserver-coupon');
       const verrouEl = document.getElementById('resa-form-verrou');
@@ -4375,6 +4435,7 @@
                 <div class="billet-ligne"><span>Heure</span><b>${escapeHtml(r.Heure)}</b></div>
                 <div class="billet-ligne"><span>Personnes</span><b>${r.NbPersonnes}</b></div>
               </div>
+              ${r.Commande ? '<div class="coupon-commande"><div class="small" style="text-transform:uppercase;letter-spacing:2px;">Précommande</div><div>' + escapeHtml(r.Commande) + '</div>' + (prixAffichesResa_() && Number(r.TotalCommande) > 0 ? '<div class="kpi-gold" style="font-weight:700;">Total estimé : ' + money(r.TotalCommande) + '</div>' : '') + '</div>' : ''}
               ${r.Statut === 'Refusée' && r.RaisonRefus ? '<div class="small mt16" style="color:var(--red);">' + escapeHtml(r.RaisonRefus) + '</div>' : ''}
               ${r.Statut === 'Confirmée' && r.NumeroReservation ? '<div class="small mt10">N° ' + escapeHtml(r.NumeroReservation) + '</div>' : ''}
               ${r.Statut === 'Confirmée' && !r.NumeroReservation ? '<div class="small mt10" id="coupon-compte-rebours">Ton numéro de réservation arrive...</div>' : ''}
@@ -4434,6 +4495,9 @@
       document.getElementById('resa-heure').value = r.Heure;
       document.getElementById('resa-nb').value = r.NbPersonnes;
       document.getElementById('resa-commentaire').value = r.Commentaire || '';
+      RESA_PANIER = {};
+      try { (JSON.parse(r.CommandeDetail || '[]') || []).forEach(l => { if (l && l.id && l.qte) RESA_PANIER[l.id] = l.qte; }); } catch (e) {  }
+      renderPrecommandeResa_();
       document.getElementById('resa-submit-btn').textContent = 'Enregistrer la modification';
       document.getElementById('resa-annuler-modif-btn').classList.remove('hidden');
       document.getElementById('resa-form-verrou').classList.add('hidden');
@@ -4448,6 +4512,7 @@
       document.getElementById('resa-heure').value = '';
       document.getElementById('resa-nb').value = 2;
       document.getElementById('resa-commentaire').value = '';
+      reinitialiserPrecommandeResa_();
       document.getElementById('resa-submit-btn').textContent = 'Envoyer la demande';
       document.getElementById('resa-annuler-modif-btn').classList.add('hidden');
       document.getElementById('resa-err').textContent = '';
@@ -4538,6 +4603,131 @@
       if (v < 1) v = 1;
       input.value = v;
     }
+    // ===== Réserver : précommande du menu =====
+    const CARTES_RESA_ = [
+      { titre: 'Cocktails', alias: ['cocktail', 'cocktails'] }, { titre: 'Alcools', alias: ['alcool', 'alcools'] },
+      { titre: 'Soft', alias: ['soft', 'softs'] }, { titre: 'Encas', alias: ['encas', 'en-cas', 'en cas'] },
+      { titre: 'Entrées', alias: ['entree', 'entrees'] }, { titre: 'Plats', alias: ['plat', 'plats'] },
+      { titre: 'Desserts', alias: ['dessert', 'desserts'] }
+    ];
+    let RESA_PANIER = {};
+    let RESA_ONGLET = 0;
+    const RESA_QTE_MAX = 20;
+    function groupesPrecommandeResa_() {
+      const norm = t => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+      const groupes = CARTES_RESA_.map(c => ({ titre: c.titre, items: [] }));
+      const autres = {};
+      (DATA.articles || []).filter(a => !estValeurVraie_(a['Hors service (forcé)'])).forEach(a => {
+        const i = CARTES_RESA_.findIndex(c => c.alias.indexOf(norm(a.Catégorie)) !== -1);
+        if (i !== -1) groupes[i].items.push(a);
+        else { const k = a.Catégorie || 'Autres'; (autres[k] = autres[k] || []).push(a); }
+      });
+      Object.keys(autres).forEach(k => groupes.push({ titre: k, items: autres[k] }));
+      return groupes.filter(g => g.items.length);
+    }
+    function prixAffichesResa_() { return DATA.vitrineAfficherPrix !== false; }
+    function resumePrecommandeResa_() {
+      let n = 0, total = 0;
+      (DATA.articles || []).forEach(a => { const q = RESA_PANIER[a.ID] || 0; if (q) { n += q; total += q * (Number(a['Prix vente ($)']) || 0); } });
+      return { n: n, total: total };
+    }
+    function renderPrecommandeResa_() {
+      const liste = document.getElementById('resa-precmd-liste');
+      if (!liste) return;
+      const groupes = groupesPrecommandeResa_();
+      const toggle = document.getElementById('resa-precmd-toggle');
+      toggle.classList.toggle('hidden', !groupes.length);
+      if (!groupes.length) { document.getElementById('resa-precmd-corps').classList.add('hidden'); return; }
+      if (RESA_ONGLET >= groupes.length) RESA_ONGLET = 0;
+      document.getElementById('resa-precmd-onglets').innerHTML = groupes.map((g, i) => {
+        const nb = g.items.reduce((s, a) => s + (RESA_PANIER[a.ID] || 0), 0);
+        return `<button type="button" class="resa-onglet${i === RESA_ONGLET ? ' actif' : ''}" onclick="choisirOngletResa_(${i})">${escapeHtml(g.titre)}${nb ? ' <b>' + nb + '</b>' : ''}</button>`;
+      }).join('');
+      const prix = prixAffichesResa_();
+      liste.innerHTML = groupes[RESA_ONGLET].items.map(a => {
+        const q = RESA_PANIER[a.ID] || 0;
+        return `<div class="resa-article${q ? ' choisi' : ''}">
+          <div class="resa-article-nom"><span>${escapeHtml(a.Article)}</span>${a.Notes ? '<small>' + escapeHtml(a.Notes) + '</small>' : ''}</div>
+          ${prix ? '<div class="resa-article-prix">' + money(a['Prix vente ($)']) + '</div>' : ''}
+          <div class="resa-qte"><button type="button" onclick="changerQteResa_('${a.ID}', -1)" ${q ? '' : 'disabled'}>−</button><span>${q}</span><button type="button" onclick="changerQteResa_('${a.ID}', 1)">+</button></div>
+        </div>`;
+      }).join('');
+      const r = resumePrecommandeResa_();
+      document.getElementById('resa-precmd-resume').textContent = r.n ? (r.n + ' article' + (r.n > 1 ? 's' : '') + (prix ? ' · ' + money(r.total) : '')) : 'Aucun article';
+      document.getElementById('resa-precmd-total').innerHTML = r.n
+        ? (prix ? 'Total estimé : <b>' + money(r.total) + '</b> <small>(à régler sur place)</small>' : r.n + ' article' + (r.n > 1 ? 's' : '') + ' précommandé' + (r.n > 1 ? 's' : ''))
+        : '<small>Choisis tes plats et boissons : on les prépare pour ton arrivée.</small>';
+    }
+    function basculerPrecommandeResa_() {
+      const corps = document.getElementById('resa-precmd-corps');
+      corps.classList.toggle('hidden');
+      document.getElementById('resa-precmd-toggle').classList.toggle('ouvert', !corps.classList.contains('hidden'));
+      renderPrecommandeResa_();
+    }
+    function choisirOngletResa_(i) { RESA_ONGLET = i; renderPrecommandeResa_(); }
+    function changerQteResa_(id, delta) {
+      const q = Math.max(0, Math.min(RESA_QTE_MAX, (RESA_PANIER[id] || 0) + delta));
+      if (q) RESA_PANIER[id] = q; else delete RESA_PANIER[id];
+      renderPrecommandeResa_();
+    }
+    function commandeResaPourEnvoi_() { return Object.keys(RESA_PANIER).map(id => ({ id: id, qte: RESA_PANIER[id] })); }
+    function reinitialiserPrecommandeResa_() { RESA_PANIER = {}; renderPrecommandeResa_(); }
+
+    // ===== Réserver : demande de VIP (bloc séparé) =====
+    let VIP_RESA_OFFRE = null;
+    function chargerStatutVipClient_() {
+      if (!CURRENT_USER || CURRENT_USER.typeCompte !== 'client') { DATA.statutVip = null; renderDemandeVipClient_(); return; }
+      google.script.run.withSuccessHandler(function (st) { DATA.statutVip = st; renderDemandeVipClient_(); })
+        .withFailureHandler(function () {}).getStatutVipClient(CURRENT_USER.sessionToken);
+    }
+    function renderDemandeVipClient_() {
+      const el = document.getElementById('reserver-vip');
+      if (!el) return;
+      const offres = DATA.vipOffres || [];
+      if (!offres.length || (CURRENT_USER && CURRENT_USER.typeCompte !== 'client')) { el.innerHTML = ''; return; }
+      if (!CURRENT_USER) {
+        el.innerHTML = '<div class="coupon-carte"><div class="vip-resa-titre">Devenir VIP</div><div class="small">Connecte-toi avec ton compte client pour demander ' + offres.map(o => escapeHtml(o.Nom)).join(', ') + '.</div></div>';
+        return;
+      }
+      if (!offres.some(o => o.ID === VIP_RESA_OFFRE)) VIP_RESA_OFFRE = offres[0].ID;
+      const st = DATA.statutVip || {};
+      const dem = st.derniereDemande, membre = st.membre;
+      const enAttente = dem && dem.Statut === 'En attente';
+      const ROMAINS = ['I', 'II', 'III', 'IV', 'V', 'VI'];
+      let statutHtml = '';
+      if (membre && new Date(membre.DateExpiration) > new Date()) statutHtml += '<div class="vip-resa-statut ok">Tu es déjà <b>' + escapeHtml(membre.OffreNom || 'VIP') + '</b> jusqu\'au ' + fmtDate(membre.DateExpiration) + '.</div>';
+      if (enAttente) statutHtml += '<div class="vip-resa-statut attente">Demande envoyée : <b>' + escapeHtml(dem.OffreNom) + '</b> - en attente de réponse.</div>';
+      else if (dem && dem.Statut === 'Refusée') statutHtml += '<div class="vip-resa-statut refus">Ta dernière demande (' + escapeHtml(dem.OffreNom) + ') a été refusée' + (dem.RaisonRefus ? ' : ' + escapeHtml(dem.RaisonRefus) : '.') + '</div>';
+      else if (dem && dem.Statut === 'Acceptée') statutHtml += '<div class="vip-resa-statut ok">Ta dernière demande (' + escapeHtml(dem.OffreNom) + ') a été acceptée.</div>';
+      el.innerHTML = `<div class="coupon-carte vip-resa">
+        <div class="vip-resa-titre">Devenir VIP</div>
+        <div class="small mb10">Choisis ton grade, on te répond au plus vite.</div>
+        ${statutHtml}
+        ${enAttente ? '' : `
+          <div class="vip-resa-offres">${offres.map((o, idx) => {
+            const tier = tierVip_(o.Nom, idx);
+            const accroche = String(o.Description || '').split(/\r?\n/).map(l => l.trim()).filter(l => l && !/^[*•\-]\s+/.test(l))[0] || '';
+            const red = Number(o.ReductionPourcent) || 0;
+            return `<div class="vv-offre vip-${tier}${o.ID === VIP_RESA_OFFRE ? ' vv-actif' : ''}" onclick="choisirOffreVipResa_('${o.ID}')">
+              <div><div class="vv-grade">Grade ${ROMAINS[idx] || (idx + 1)}</div><div class="vv-nom">${escapeHtml(o.Nom)}</div>${accroche ? '<div class="vv-accroche">' + escapeHtml(accroche) + '</div>' : ''}</div>
+              <div class="vv-infos">${red > 0 ? '<div class="vv-red">-' + red + ' %</div>' : ''}<div class="small">${escapeHtml(String(o.DuréeJours))} jours</div></div>
+            </div>`; }).join('')}</div>
+          <button class="btn-primary btn-block mt10" onclick="envoyerDemandeVipUI()">Demander ce VIP</button>
+          <div class="err" id="vip-resa-err"></div>`}
+      </div>`;
+    }
+    function choisirOffreVipResa_(id) { VIP_RESA_OFFRE = id; renderDemandeVipClient_(); }
+    function envoyerDemandeVipUI() {
+      const errEl = document.getElementById('vip-resa-err');
+      if (errEl) errEl.textContent = '';
+      if (!CURRENT_USER || !VIP_RESA_OFFRE) return;
+      google.script.run.withSuccessHandler(function () {
+        showToast('Demande VIP envoyée - on te répond au plus vite !');
+        chargerStatutVipClient_();
+      }).withFailureHandler(function (err) { if (errEl) errEl.textContent = err.message || String(err); })
+        .demanderVip(VIP_RESA_OFFRE, '', CURRENT_USER.sessionToken);
+    }
+
     function envoyerReservationUI() {
       if (RESA_MODE === 'modification') { envoyerModifReservationUI_(); return; }
       if (RESA_EN_COURS) return;
@@ -4560,10 +4750,11 @@
         document.getElementById('resa-nom').value = ''; document.getElementById('resa-telephone').value = '555-';
         document.getElementById('resa-date').value = ''; document.getElementById('resa-heure').value = '';
         document.getElementById('resa-nb').value = 2; document.getElementById('resa-commentaire').value = '';
+        reinitialiserPrecommandeResa_();
         showToast('Demande envoyée - on te confirme par téléphone !');
         if (clientId) chargerStatutReservationClient_();
       }).withFailureHandler(function (err) { RESA_EN_COURS = false; errEl.textContent = err.message || String(err); })
-        .ajouterReservation(nom, telephone, date, heure, nb, commentaire, CURRENT_USER.sessionToken);
+        .ajouterReservation(nom, telephone, date, heure, nb, commentaire, CURRENT_USER.sessionToken, commandeResaPourEnvoi_());
     }
     function envoyerModifReservationUI_() {
       if (RESA_EN_COURS) return;
@@ -4583,7 +4774,7 @@
         chargerStatutReservationClient_();
         showToast('Demande modifiée - repassée en attente de réponse.');
       }).withFailureHandler(function (err) { RESA_EN_COURS = false; errEl.textContent = err.message || String(err); })
-        .modifierMaReservation(id, CURRENT_USER.sessionToken, date, heure, nb, commentaire);
+        .modifierMaReservation(id, CURRENT_USER.sessionToken, date, heure, nb, commentaire, commandeResaPourEnvoi_());
     }
     function afficherEcranLoginNormal() {
       masquerChargement();
@@ -6245,7 +6436,7 @@
       if (btnEl) btnEl.classList.add('active');
       if (mode === 'cigares') { renderCatalogueCigaresVente_(); renderCartCigaresUI(); chargerListeComptesClientsPourVentes_('cart-cigares-client'); }
       if (mode === 'normale') chargerListeComptesClientsPourVentes_('cart-client');
-      if (mode === 'vip') renderVentesVip_();
+      if (mode === 'vip') { renderVentesVip_(); chargerDemandesVipVentes_(); }
       if (mode === 'export') chargerListeComptesClientsPourVentes_('export-client');
     }
 
@@ -6302,6 +6493,37 @@
           <td>${fmtDate(m.DateExpiration)}</td><td class="${d.classe}" style="font-weight:600;">${d.texte}</td>
           <td><a class="linklike" onclick="renouvelerVipDepuisVentes_('${m.ID}')">Renouveler</a></td></tr>`;
       }).join('') || '<tr><td colspan="5" class="small">Aucun membre VIP pour l\'instant.</td></tr>';
+    }
+    function chargerDemandesVipVentes_() {
+      google.script.run.withSuccessHandler(function (liste) { DATA.vipDemandes = liste || []; renderDemandesVipVentes_(); })
+        .withFailureHandler(function () { document.getElementById('ventes-vip-demandes').innerHTML = '<tr><td colspan="6" class="small">Impossible de charger les demandes.</td></tr>'; })
+        .getVipDemandes(CURRENT_USER.sessionToken);
+    }
+    function renderDemandesVipVentes_() {
+      const toutes = DATA.vipDemandes || [];
+      const attente = toutes.filter(d => d.Statut === 'En attente');
+      const traitees = toutes.filter(d => d.Statut !== 'En attente').slice(0, 5);
+      document.getElementById('ventes-vip-demandes-compte').textContent = attente.length ? '(' + attente.length + ' en attente)' : '';
+      const couleur = { 'En attente': 'kpi-gold', 'Acceptée': 'kpi-green', 'Refusée': 'kpi-red' };
+      document.getElementById('ventes-vip-demandes').innerHTML = attente.concat(traitees).map(d => `<tr>
+        <td>${escapeHtml(d.Nom)}</td><td class="small">${escapeHtml(d.Téléphone || '-')}</td><td><b>${escapeHtml(d.OffreNom)}</b></td>
+        <td class="small">${fmtDate(d.DateCreation)}</td><td class="${couleur[d.Statut] || ''}" style="font-weight:600;">${escapeHtml(d.Statut)}</td>
+        <td>${d.Statut === 'En attente' ? `<a class="linklike" onclick="traiterVipDemandeUI('${d.ID}','Acceptée')">Accepter</a> <a class="linklike" onclick="traiterVipDemandeUI('${d.ID}','Refusée')">Refuser</a>` : ''}</td>
+      </tr>`).join('') || '<tr><td colspan="6" class="small">Aucune demande VIP pour l\'instant.</td></tr>';
+    }
+    function traiterVipDemandeUI(id, decision) {
+      let raison = '';
+      if (decision === 'Refusée') {
+        const r = prompt('Raison du refus (facultatif) :');
+        if (r === null) return;
+        raison = r;
+      } else if (!confirm('Accepter cette demande et activer le VIP pour le client ?')) return;
+      google.script.run.withSuccessHandler(function (res) {
+        if (res && res.membres) DATA.vipMembres = res.membres;
+        showToast(decision === 'Acceptée' ? 'VIP activé pour le client.' : 'Demande refusée.');
+        chargerDemandesVipVentes_();
+        renderVentesVip_();
+      }).withFailureHandler(onError).traiterVipDemande(id, decision, CURRENT_USER.sessionToken, raison);
     }
     function choisirOffreVipVentes_(id) { VENTES_VIP_OFFRE = id; renderVentesVip_(); }
     function activerVipDepuisVentes() {
@@ -6733,8 +6955,9 @@
         const commentaireAffiche = r.Statut === 'Refusée' && r.RaisonRefus
           ? escapeHtml(r.Commentaire || '-') + '<div class="small" style="color:var(--red);margin-top:2px;">Refus : ' + escapeHtml(r.RaisonRefus) + '</div>'
           : escapeHtml(r.Commentaire || '-');
+        const commandeAffichee = r.Commande ? '<div class="small" style="color:var(--gold);margin-top:4px;">Précommande : ' + escapeHtml(r.Commande) + (Number(r.TotalCommande) > 0 ? ' - ' + money(r.TotalCommande) : '') + '</div>' : '';
         return `<tr><td class="kpi-gold" style="font-weight:700;">${escapeHtml(r.NumeroReservation || '-')}</td><td>${fmtDate(r.DateReservation)}</td><td>${escapeHtml(r.Heure)}</td><td>${escapeHtml(r.Nom)}</td><td class="small">${escapeHtml(r.Téléphone)}</td>
-          <td>${r.NbPersonnes}</td><td class="small">${commentaireAffiche}</td><td class="${couleurStatut}" style="font-weight:600;">${escapeHtml(r.Statut)}</td>
+          <td>${r.NbPersonnes}</td><td class="small">${commentaireAffiche}${commandeAffichee}</td><td class="${couleurStatut}" style="font-weight:600;">${escapeHtml(r.Statut)}</td>
           <td>${r.Statut !== 'Confirmée' ? `<a class="linklike" onclick="traiterReservationUI('${r.ID}','Confirmée')">Confirmer</a> ` : ''}${r.Statut !== 'Refusée' ? `<a class="linklike" onclick="traiterReservationUI('${r.ID}','Refusée')">Refuser</a> ` : `<a class="linklike" onclick="modifierRaisonRefusUI('${r.ID}')">Modifier la raison</a> `}<a class="linklike" onclick="supprimerReservationUI('${r.ID}')">Supprimer</a></td></tr>`;
       }).join('') || '<tr><td colspan="9" class="small">Aucune réservation ici.</td></tr>';
     }
