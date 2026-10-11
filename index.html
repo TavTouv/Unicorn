@@ -58,12 +58,27 @@
                 if (echecFn) echecFn(new Error("Le back-end n'est pas configuré : ouvre index.html et remplace COLLE_ICI_L_URL_DE_TON_DEPLOIEMENT_APPS_SCRIPT par l'URL /exec de ton Apps Script."));
                 return;
               }
-              fetch(URL_API_APPS_SCRIPT, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
-                body: JSON.stringify({ fonction: String(nomProp), args: args })
-              })
-                .then(function (r) { return r.text(); })
+              // Appels de lecture / connexion : on réessaie automatiquement (cold start d'Apps Script, réseau capricieux)
+              // au lieu d'obliger l'utilisateur à recharger la page. Jamais pour les écritures (risque de doublon).
+              var rejouable = /^(get|peut|identifiant|heartbeat|login)/.test(String(nomProp));
+              var corps = JSON.stringify({ fonction: String(nomProp), args: args });
+              function appeler(essai) {
+                return fetch(URL_API_APPS_SCRIPT, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                  body: corps
+                }).then(function (r) { return r.text(); }).then(function (texte) {
+                  if (rejouable && essai < 3 && texte.charAt(0) !== '{') throw new Error('__reessayer__');
+                  return texte;
+                }).catch(function (err) {
+                  if (rejouable && essai < 3) {
+                    return new Promise(function (ok) { setTimeout(ok, 500 * essai); }).then(function () { return appeler(essai + 1); });
+                  }
+                  if (err && err.message === '__reessayer__') return '';
+                  throw err;
+                });
+              }
+              appeler(1)
                 .then(function (texte) {
                   let res;
                   try { res = JSON.parse(texte); } catch (e) {
@@ -3418,10 +3433,11 @@
     let CART = [];
     let chartEmployes = null;
 
+    const ROLES_PATRON_ = ['Propriétaire', 'Patron']; // rôles "direction" : mêmes droits
     const isManagement = (permission) => permission === 'Direction';
 
     const FONCTIONS_LECTURE_SEULE = new Set([
-      'getInitialData', 'getArticlesAvecStock', 'getStockActuel', 'getMouvementsStock', 'getHistoriqueSuspensions', 'getHistoriqueSuspensionsEmploye', 'getImpots', 'getSubventions', 'getDashboardData', 'getTauxFiscActuel', 'getNomEntrepriseActuel',
+      'getInitialData', 'getDonneesApp', 'getArticlesAvecStock', 'getStockActuel', 'getMouvementsStock', 'getHistoriqueSuspensions', 'getHistoriqueSuspensionsEmploye', 'getImpots', 'getSubventions', 'getDashboardData', 'getTauxFiscActuel', 'getNomEntrepriseActuel',
       'getProfilStats', 'getStatsSuccursales', 'getRapportEntreprise', 'getContrats', 'getEvenements',
       'getMessagesChat', 'getLiensDJ', 'getCommissionsSemaine', 'getAbsences',
       'getMessagesPrivesEntre', 'getMesConversations', 'getToutesConversationsPrivees',
@@ -3494,7 +3510,7 @@
       fr: {
         'nav.dashboard': 'Tableau de bord', 'nav.shifts': 'Shifts', 'nav.ventes': 'Ventes',
         'nav.achats': 'Dépenses', 'nav.stock': 'Stock', 'nav.articles': 'Articles',
-        'nav.paie': 'Paie', 'nav.objectifs': 'Objectifs', 'nav.patron': 'Patron', 'nav.gerant': 'Gérant',
+        'nav.paie': 'Paie', 'nav.objectifs': 'Objectifs', 'nav.patron': 'Gestion employés', 'nav.gerant': 'Gestion employés',
         'nav.mastersettings': 'Master Settings', 'nav.monprofil': 'Mon Profil',
         'nav.stats': 'Statistiques', 'nav.settings': 'Paramètres', 'nav.logout': 'Déconnexion',
         'header.bienvenue': 'Bienvenue',
@@ -3836,7 +3852,7 @@
           }
           DERNIER_NB_RESA_ATTENTE = resultat.reservationsEnAttente;
         }
-        if (CURRENT_USER['Rôle'] === 'Patron') {
+        if (ROLES_PATRON_.indexOf(CURRENT_USER['Rôle']) !== -1) {
           const enAttente = resultat.absences.filter(a => a.Statut === 'En attente').length;
           if (DERNIER_NB_ABSENCES_ATTENTE !== null && enAttente > DERNIER_NB_ABSENCES_ATTENTE) {
             jouerSonNotification('rh');
@@ -3897,7 +3913,7 @@
           });
         });
       }
-      if (CURRENT_USER['Rôle'] === 'Patron') {
+      if (ROLES_PATRON_.indexOf(CURRENT_USER['Rôle']) !== -1) {
         absences.filter(a => a.Statut === 'En attente').forEach(a => {
           notifs.push({
             id: 'abs-attente-' + a.ID, categorie: 'RH', texte: a.Employé + ' a demandé un congé', couleur: 'var(--gold)',
@@ -4388,13 +4404,27 @@
       afficherVitrinePublique();
     }
 
+    // Après la connexion, le personnel reçoit ses données (employés, ventes, réservations...) : elles ne sont
+    // plus envoyées à tous les visiteurs de la page publique.
+    function chargerDonneesApp_(compte, suite) {
+      afficherChargement('Préparation de ton espace...');
+      google.script.run.withSuccessHandler(function (complet) {
+        Object.assign(DATA, complet);
+        suite();
+      }).withFailureHandler(function (err) {
+        masquerChargement();
+        CURRENT_USER = null;
+        afficherEcranLoginNormal();
+        onError(err);
+      }).getDonneesApp(compte.sessionToken);
+    }
     function apresConnexionReussie(compte) {
       CURRENT_USER = compte;
       if (compte.typeCompte === 'client') {
         enterEspaceClient();
         if (compte.DoitChangerMdp) ouvrirChangementMdpClient(true);
       } else {
-        enterApp();
+        chargerDonneesApp_(compte, enterApp);
       }
     }
 
@@ -4814,7 +4844,7 @@
         document.getElementById('login-slogan-wrap').classList.remove('hidden');
       }
       renderLoginLangueBoutons();
-      if (DATA.employes.length === 0) {
+      if (DATA.aucunEmploye === true) {
         document.getElementById('login-normal').classList.add('hidden');
         document.getElementById('login-bootstrap').classList.remove('hidden');
       }
@@ -5228,10 +5258,9 @@
       google.script.run.withSuccessHandler(function (m) {
 
         google.script.run.withSuccessHandler(function (compteAvecToken) {
-          DATA.employes.push(compteAvecToken);
           CURRENT_USER = compteAvecToken;
           sauvegarderSessionAutoLogin(identifiant, pwd);
-          enterApp();
+          chargerDonneesApp_(compteAvecToken, enterApp);
         }).withFailureHandler(function (err) { masquerChargement(); errEl.textContent = err.message || String(err); })
           .loginAvecIdentifiant(identifiant, pwd);
       }).withFailureHandler(function (err) { masquerChargement(); errEl.textContent = err.message || String(err); }).addEmploye('', nom, identifiant, 'Propriétaire', 'Direction', '', 0, 0, 0, pwd, '');
@@ -5280,14 +5309,14 @@
         document.getElementById('brand-header').textContent = DATA.nomEntreprise || "UNICORN";
         document.title = (DATA.nomEntreprise || "UNICORN") + ' - Comptabilité';
         document.getElementById('header-bienvenue').textContent =
-          t('header.bienvenue') + ', ' + (CURRENT_USER['Nom RP'] || '') + ' (' + (CURRENT_USER['Rôle'] || '') + ')' + (CURRENT_USER.Statut ? ' - ' + CURRENT_USER.Statut : '');
+          t('header.bienvenue') + ', ' + (CURRENT_USER['Nom RP'] || '') + ' (' + libelleRole_(CURRENT_USER['Rôle']) + ')' + (CURRENT_USER.Statut ? ' - ' + CURRENT_USER.Statut : '');
 
         CAN_SEE_MASTER_SETTINGS = estValeurVraie_(CURRENT_USER.MasterSettings);
         try { sessionStorage.removeItem('unicorn_reload_session_expiree'); } catch (e) {  }
         demarrerSurveillanceVersion();
         surveillanceGenerale();
         clearInterval(TIMER_SURVEILLANCE_GENERALE); // au cas où une session précédente (logout/login sans recharger) en aurait laissé une tourner
-        TIMER_SURVEILLANCE_GENERALE = setInterval(surveillanceGenerale, 5000);
+        TIMER_SURVEILLANCE_GENERALE = setInterval(function () { if (!document.hidden) surveillanceGenerale(); }, 15000);
         finaliserEntreeApp();
       } catch (e) {
         masquerChargement();
@@ -5380,10 +5409,10 @@
 
     function renderNav() {
       const mgmt = !!CURRENT_USER && isManagement(CURRENT_USER.Permission);
-      const peutCreer = !!CURRENT_USER && DATA.rolesCreateurs.indexOf(CURRENT_USER['Rôle']) !== -1;
-      const estPatron = !!CURRENT_USER && CURRENT_USER['Rôle'] === 'Patron';
+      const peutCreer = !!CURRENT_USER && (DATA.rolesCreateurs.indexOf(CURRENT_USER['Rôle']) !== -1 || CAN_SEE_MASTER_SETTINGS);
+      const estPatron = !!CURRENT_USER && ROLES_PATRON_.indexOf(CURRENT_USER['Rôle']) !== -1;
       const estGerant = !!CURRENT_USER && CURRENT_USER['Rôle'] === 'Gérant·e';
-      const rolesRapports = ['Patron', 'Co-Patron·ne', 'Fisc'];
+      const rolesRapports = ['Patron', 'Propriétaire', 'Co-Patron·ne', 'Fisc'];
       const voitRapports = !!CURRENT_USER && rolesRapports.indexOf(CURRENT_USER['Rôle']) !== -1;
       const labelPatronSection = estGerant ? t('nav.gerant') : t('nav.patron');
       const tabs = [
@@ -5475,8 +5504,10 @@
       return firstTab;
     }
 
+    // Affichage du rôle : "Patron" (rôle interne qui porte les droits) s'affiche avec son libellé (ex. "Directrice / Patronne").
+    function libelleRole_(r) { return r === 'Patron' ? ((DATA && DATA.libellePatron) || 'Patron') : r; }
     function populateSelect(elId, arr) {
-      document.getElementById(elId).innerHTML = arr.map(v => `<option value="${v}">${v}</option>`).join('');
+      document.getElementById(elId).innerHTML = arr.map(v => `<option value="${v}">${libelleRole_(v)}</option>`).join('');
     }
     function populateArticleSelect(elId) {
       document.getElementById(elId).innerHTML = DATA.articles.map(a => `<option value="${a.ID}">${a.Article}</option>`).join('');
@@ -5503,7 +5534,7 @@
     function renderCarteProfil() {
       document.getElementById('profil-carte-avatar').textContent = avatarOuInitiale(CURRENT_USER.Avatar, CURRENT_USER['Nom RP']);
       document.getElementById('profil-nomprenom').textContent = CURRENT_USER['Nom RP'] || '';
-      document.getElementById('profil-role').textContent = CURRENT_USER['Rôle'] || '';
+      document.getElementById('profil-role').textContent = libelleRole_(CURRENT_USER['Rôle']);
       document.getElementById('profil-carte-statut').textContent = CURRENT_USER.Statut || '';
       document.getElementById('profil-carte-bio').textContent = CURRENT_USER.Bio || '';
     }
@@ -5567,7 +5598,7 @@
       document.getElementById('profil-apercu-avatar').textContent = avatarOuInitiale(AVATAR_SELECTIONNE, CURRENT_USER['Nom RP']);
       document.getElementById('profil-apercu-nom').textContent = CURRENT_USER['Nom RP'] || '';
       document.getElementById('profil-apercu-nom').style.color = couleur;
-      document.getElementById('profil-apercu-role').textContent = CURRENT_USER['Rôle'] || '';
+      document.getElementById('profil-apercu-role').textContent = libelleRole_(CURRENT_USER['Rôle']);
       document.getElementById('profil-apercu-statut').textContent = statut || '';
       document.getElementById('profil-apercu-bio').textContent = bio || '';
     }
@@ -5637,7 +5668,7 @@
       google.script.run.withSuccessHandler(function (stats) {
         document.getElementById('profil-heures').textContent = stats.heures + ' h';
         document.getElementById('profil-ca').textContent = money(stats.chiffreAffaires);
-        const voitDepenses = isManagement(CURRENT_USER.Permission) || ['Patron', 'Gérant·e'].indexOf(CURRENT_USER['Rôle']) !== -1;
+        const voitDepenses = isManagement(CURRENT_USER.Permission) || ['Patron', 'Propriétaire', 'Gérant·e'].indexOf(CURRENT_USER['Rôle']) !== -1;
         document.getElementById('profil-depenses-card').classList.toggle('hidden', !voitDepenses);
         if (voitDepenses) document.getElementById('profil-depenses').textContent = money(stats.depenses);
         renderProfilChart(stats.courbe);
@@ -5783,7 +5814,7 @@
         return `<div class="card" style="text-align:center;padding:14px;cursor:pointer;" onclick="ouvrirFicheEquipe('${e.ID}')">
           <div class="monogramme">${avatarOuInitiale(e.Avatar, e['Nom RP'])}</div>
           <div style="font-weight:700;margin-top:4px;">${escapeHtml(e['Nom RP'] || '')}</div>
-          <div class="small">${escapeHtml(e['Rôle'] || '')}</div>
+          <div class="small">${escapeHtml(libelleRole_(e['Rôle']))}</div>
           <span class="badge-statut ${statutShift.classe}" style="margin-top:8px;display:inline-block;">${statutShift.texte}</span>
           ${e.Statut ? `<div class="small" style="margin-top:6px;color:var(--text-mute);">${escapeHtml(e.Statut)}</div>` : ''}
         </div>`;
@@ -5794,7 +5825,7 @@
       if (!e) return;
       document.getElementById('fiche-avatar').textContent = avatarOuInitiale(e.Avatar, e['Nom RP']);
       document.getElementById('fiche-nom').textContent = e['Nom RP'] || '';
-      document.getElementById('fiche-role').textContent = e['Rôle'] || '';
+      document.getElementById('fiche-role').textContent = libelleRole_(e['Rôle']);
       document.getElementById('fiche-statut').textContent = e.Statut || '';
       document.getElementById('fiche-bio').textContent = e.Bio || '(Pas de bio pour l\'instant.)';
       const shiftActif = (DATA.shifts || []).find(s => s.EmployéID === e.ID && s.Statut !== 'terminé');
@@ -5982,7 +6013,7 @@
         `<tr><td>${l.rang}</td><td>${escapeHtml(l.nom)}</td><td>${escapeHtml(l.role)}</td><td class="kpi-gold">${money(l.revenus)}</td></tr>`
       ).join('') || '<tr><td colspan="4" class="small">Aucun employé correspondant.</td></tr>';
 
-      const peutConfigLeaderboard = ['Patron', 'Gérant·e'].indexOf(CURRENT_USER['Rôle']) !== -1;
+      const peutConfigLeaderboard = ['Patron', 'Propriétaire', 'Gérant·e'].indexOf(CURRENT_USER['Rôle']) !== -1;
       document.getElementById('leaderboard-config-link').classList.toggle('hidden', !peutConfigLeaderboard);
 
       renderMesAbsences();
@@ -6009,7 +6040,7 @@
     function renderGestionRapide() {
       const bloc = document.getElementById('dash-gestion-rapide');
       if (!bloc || !CURRENT_USER) return;
-      const estPatronOuGerant = ['Patron', 'Gérant·e'].indexOf(CURRENT_USER['Rôle']) !== -1;
+      const estPatronOuGerant = ['Patron', 'Propriétaire', 'Gérant·e'].indexOf(CURRENT_USER['Rôle']) !== -1;
       bloc.classList.toggle('hidden', !estPatronOuGerant);
       if (!estPatronOuGerant) return;
 
@@ -6053,7 +6084,7 @@
       document.getElementById('leaderboard-roles-liste').innerHTML = DATA.roles.map(r =>
         `<label class="role-check-item">
           <input type="checkbox" value="${escapeHtml(r)}" ${actuels.indexOf(r) !== -1 ? 'checked' : ''}>
-          <span>${escapeHtml(r)}</span>
+          <span>${escapeHtml(libelleRole_(r))}</span>
         </label>`
       ).join('');
       document.getElementById('leaderboard-config-err').textContent = '';
@@ -6276,7 +6307,7 @@
     }
 
     function articlesVisiblesPourMoi() {
-      const rolesVoientTout = ['Patron', 'Co-Patron·ne'];
+      const rolesVoientTout = ['Patron', 'Propriétaire', 'Co-Patron·ne'];
       const voitTout = !CURRENT_USER.Succursale || rolesVoientTout.indexOf(CURRENT_USER['Rôle']) !== -1;
       if (voitTout) return DATA.articles;
       return DATA.articles.filter(a => !a.Succursale || a.Succursale === CURRENT_USER.Succursale);
@@ -6409,7 +6440,7 @@
 
     function filtrerHistoriquePourMoi(liste, getSuccursale, getEmployeId, scopeSiPatron) {
       const role = CURRENT_USER['Rôle'];
-      if (role === 'Patron') {
+      if (ROLES_PATRON_.indexOf(role) !== -1) {
         if (!scopeSiPatron || scopeSiPatron === 'global') return liste;
         return liste.filter(x => getSuccursale(x) === scopeSiPatron);
       }
@@ -6421,7 +6452,7 @@
     function renderScopeHistorique(containerId, scopeActuel) {
       const el = document.getElementById(containerId);
       if (!el) return;
-      if (CURRENT_USER['Rôle'] !== 'Patron') { el.innerHTML = ''; return; }
+      if (ROLES_PATRON_.indexOf(CURRENT_USER['Rôle']) === -1) { el.innerHTML = ''; return; }
       const options = [['global', 'Global']].concat(DATA.succursales.map(s => [s.Nom, s.Nom]));
       el.innerHTML = options.map(o =>
         `<button class="filter-btn ${o[0] === scopeActuel ? 'active' : ''}" onclick="changerScopeHistorique('${containerId}','${o[0]}')">${escapeHtml(o[1])}</button>`
@@ -6598,7 +6629,7 @@
     }
 
     function peutGererExport() {
-      return !!CURRENT_USER && CURRENT_USER['Rôle'] === 'Patron';
+      return !!CURRENT_USER && ROLES_PATRON_.indexOf(CURRENT_USER['Rôle']) !== -1;
     }
     let EXPORT_ITEM_SELECTIONNE = null; 
     function renderExportTab() {
@@ -7116,7 +7147,7 @@
       document.title = (DATA.nomEntreprise || 'UNICORN') + ' - Comptabilité';
       clearInterval(TIMER_SURVEILLANCE_GENERALE);
       surveillanceGenerale();
-      TIMER_SURVEILLANCE_GENERALE = setInterval(surveillanceGenerale, 5000);
+      TIMER_SURVEILLANCE_GENERALE = setInterval(function () { if (!document.hidden) surveillanceGenerale(); }, 15000);
     }
     function reinitialiserMdpClientUI(clientId) {
       confirmerActionAvantExecution('Réinitialiser le mot de passe', 'Un mot de passe provisoire va être créé. L\'ancien ne fonctionnera plus et le client devra en choisir un nouveau à sa prochaine connexion.', function () {
@@ -7615,7 +7646,7 @@
         if (suspendu) statuts.push('<span class="badge-statut termine">Suspendu</span>');
         if (mute) statuts.push('<span class="badge-statut pause">Mute</span>');
         if (!suspendu && !mute) statuts.push('<span class="badge-statut actif">Normal</span>');
-        return `<tr><td>${escapeHtml(e['Nom RP'])}</td><td class="small">${escapeHtml(e['Rôle'])}</td><td>${statuts.join(' ')}</td>
+        return `<tr><td>${escapeHtml(e['Nom RP'])}</td><td class="small">${escapeHtml(libelleRole_(e['Rôle']))}</td><td>${statuts.join(' ')}</td>
           <td>
             <a class="linklike" onclick="suspendreCompteUI('${e.ID}', '${escapeHtml(e['Nom RP'])}', ${!suspendu})">${suspendu ? 'Lever la suspension' : 'Suspendre'}</a> ·
             <a class="linklike" onclick="ouvrirMuteEmploye('${e.ID}','${escapeHtml(e['Nom RP'])}')">Muter</a>
@@ -7633,14 +7664,14 @@
       const disponibles = employes.filter(e => !estValeurVraie_(e.Suspendu) && e.ID !== CURRENT_USER.ID);
 
       document.getElementById('suspensions-select-employe').innerHTML = disponibles.map(e =>
-        `<option value="${e.ID}">${escapeHtml(e['Nom RP'])} (${escapeHtml(e['Rôle'])})</option>`
+        `<option value="${e.ID}">${escapeHtml(e['Nom RP'])} (${escapeHtml(libelleRole_(e['Rôle']))})</option>`
       ).join('') || '<option value="">Aucun compte disponible</option>';
 
       const badge = document.getElementById('patron-onglet-suspensions-badge');
       if (badge) badge.textContent = suspendus.length > 0 ? ' (' + suspendus.length + ')' : '';
 
       document.getElementById('tbl-suspensions-actuelles').innerHTML = suspendus.map(e =>
-        `<tr><td>${escapeHtml(e['Nom RP'])}</td><td>${escapeHtml(e['Rôle'])}</td>
+        `<tr><td>${escapeHtml(e['Nom RP'])}</td><td>${escapeHtml(libelleRole_(e['Rôle']))}</td>
           <td class="small">${escapeHtml(e.SuspensionRaison || '-')}</td>
           <td class="small">${e.SuspensionJusqua ? fmtDate(e.SuspensionJusqua) : 'Permanente'}</td>
           <td class="small">${escapeHtml(e.SuspendPar || '-')}</td>
@@ -7850,7 +7881,7 @@
               <button class="btn-ghost" style="padding:2px 7px;font-size:11px;" ${i === 0 ? 'disabled' : ''} onclick="deplacerEmployeUI('${e.ID}',-1)">▲</button>
               <button class="btn-ghost" style="padding:2px 7px;font-size:11px;" ${i === DATA.employes.length - 1 ? 'disabled' : ''} onclick="deplacerEmployeUI('${e.ID}',1)">▼</button>
             </span>`}
-          </td><td>${escapeHtml(e['Nom RP'])}</td><td class="small">${escapeHtml(e.Identifiant || '-')}</td><td>${escapeHtml(e['Rôle'])}${e.RoleSecondaire ? ` <span class="small">(+ ${escapeHtml(e.RoleSecondaire)})</span>` : ''}</td><td class="succursale-field">${escapeHtml(e.Succursale || '-')}</td>
+          </td><td>${escapeHtml(e['Nom RP'])}</td><td class="small">${escapeHtml(e.Identifiant || '-')}</td><td>${escapeHtml(libelleRole_(e['Rôle']))}${e.RoleSecondaire ? ` <span class="small">(+ ${escapeHtml(e.RoleSecondaire)})</span>` : ''}</td><td class="succursale-field">${escapeHtml(e.Succursale || '-')}</td>
           <td>${money(e['Paie fixe ($)'])}</td><td>${e['Commission %'] || 0}%</td>
           <td class="small" title="${escapeHtml(e.Notes || '')}" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${lastComment(e.Notes)}</td>
           <td>${estValeurVraie_(e.Vire) ? `<span class="badge-statut termine" style="background:rgba(0,0,0,.3);" title="${escapeHtml('Viré par ' + (e.VirePar || '?') + (e.VireRaison ? ' - ' + e.VireRaison : ''))}">Viré</span>` : estValeurVraie_(e.Suspendu) ? `<span class="badge-statut termine" title="${escapeHtml((e.SuspensionRaison ? e.SuspensionRaison + ' - ' : '') + (e.SuspensionJusqua ? 'jusqu\'au ' + fmtDate(e.SuspensionJusqua) : 'permanente'))}">Suspendu</span>` : '<span class="badge-statut actif">Actif</span>'}</td>
@@ -8147,7 +8178,7 @@
       const el = document.getElementById('roles-list');
       if (!el) return;
       el.innerHTML = DATA.roles.map(r =>
-        `<span class="pill pill-staff" style="margin:3px;display:inline-flex;gap:6px;align-items:center;">${escapeHtml(r)}
+        `<span class="pill pill-staff" style="margin:3px;display:inline-flex;gap:6px;align-items:center;">${escapeHtml(libelleRole_(r))}
           <a class="linklike" style="color:inherit;" onclick="supprimerRole('${encodeURIComponent(r)}')">✕</a></span>`
       ).join('');
     }
@@ -8437,7 +8468,7 @@
       return !!CURRENT_USER;
     }
     function peutGererHoraires() {
-      return !!CURRENT_USER && ['Patron', 'Gérant·e'].indexOf(CURRENT_USER['Rôle']) !== -1;
+      return !!CURRENT_USER && ['Patron', 'Propriétaire', 'Gérant·e'].indexOf(CURRENT_USER['Rôle']) !== -1;
     }
 
     const JOURS_SEMAINE = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
@@ -8547,7 +8578,7 @@
       const input = document.getElementById('chat-message');
       const texte = input.value.trim();
       if (!texte) return;
-      if (texte.toLowerCase().startsWith('/annonce') && CURRENT_USER['Rôle'] === 'Patron') {
+      if (texte.toLowerCase().startsWith('/annonce') && ROLES_PATRON_.indexOf(CURRENT_USER['Rôle']) !== -1) {
         const match = texte.match(/^\/annonce@(\S+)\s+([\s\S]+)$/i);
         input.value = '';
         if (match) {
