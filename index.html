@@ -4861,6 +4861,7 @@
       if (!vitrineDesactivee && document.getElementById('vitrine-publique').classList.contains('hidden')) {
         afficherVitrinePublique();
       }
+      document.getElementById('login-screen').style.display = '';
       document.getElementById('login-screen').classList.toggle('plein-ecran', vitrineDesactivee);
       document.getElementById('login-screen').classList.remove('hidden');
 
@@ -5303,6 +5304,7 @@
       clearInterval(TIMER_SURVEILLANCE_GENERALE);
       try { localStorage.removeItem('unicorn_auto_login'); } catch (e) {  }
       document.getElementById('app').style.display = 'none';
+      document.getElementById('login-screen').style.display = '';
       document.getElementById('login-screen').classList.add('hidden');
       if (DATA.vitrineActive === false) { afficherEcranLoginNormal(); } else { afficherVitrinePublique(); }
     }
@@ -5328,7 +5330,6 @@
       afficherChargement('Préparation de ton espace...');
       restaurerThemePersonnel_();
       try {
-        document.getElementById('login-screen').style.display = 'none';
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('vitrine-publique').classList.add('hidden');
         document.getElementById('app').style.display = 'block';
