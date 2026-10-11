@@ -653,6 +653,116 @@
       border-image: linear-gradient(90deg, transparent, var(--gold) 20%, var(--pink) 50%, var(--gold) 80%, transparent) 1;
     }
 
+    /* ===== Pages Horaires / Réserver / VIP / À propos : composants ornés ===== */
+    .orne-page { max-width: 780px; margin: 6px auto 40px; }
+    .orne-page.orne-moyen { max-width: 1000px; }
+    .orne-page.orne-large { max-width: 1240px; }
+    .orne-cadre, #vitrine-publique .orne-carte, #vitrine-publique .coupon-carte {
+      position: relative; box-sizing: border-box; border-radius: 0;
+      border: 2px solid transparent;
+      border-image: linear-gradient(135deg, var(--gold), var(--pink), var(--gold), var(--pink-deep), var(--gold)) 1;
+      background: var(--velours);
+      box-shadow: inset 0 0 0 8px var(--bg-panel), inset 0 0 0 9px rgba(236,215,166,.45), 0 10px 34px rgba(0,0,0,.4);
+    }
+    .orne-cadre { padding: 50px 58px 44px; }
+    #vitrine-publique .orne-carte { padding: 46px 48px 40px; }
+    #vitrine-page-reserver .orne-carte .grid-2 { grid-template-columns: 1fr 1fr; gap: 14px; }
+    #vitrine-publique .coupon-carte { padding: 34px 30px; text-align: center; }
+    .orne-cadre > .carte-coin, .orne-carte > .carte-coin { width: 84px; height: 84px; }
+    .orne-entete { text-align: center; margin-bottom: 28px; }
+    .orne-orn { display: block; width: 240px; max-width: 70%; height: 32px; margin: 0 auto 12px; pointer-events: none; }
+    .orne-pied { display: block; width: 200px; max-width: 60%; height: 28px; margin: 30px auto 0; transform: scaleY(-1); pointer-events: none; }
+    #vitrine-publique .orne-titre {
+      font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif; font-weight: 600; font-size: 46px; letter-spacing: 3px;
+      line-height: 1.1; margin: 0; text-transform: none;
+      background: linear-gradient(120deg, var(--pink-deep) 0%, var(--gold) 28%, var(--text) 50%, var(--gold) 72%, var(--pink) 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent;
+    }
+    .orne-sous { font-style: italic; color: var(--text-mute); margin-top: 8px; font-size: 17px; }
+    .orne-texte { font-size: 19px; line-height: 1.7; color: var(--text); text-align: center; }
+
+    /* Horaires */
+    #vitrine-publique .horaires-statut-hero {
+      --statut: var(--red); max-width: none; margin: 0 0 28px; padding: 22px 20px; border-radius: 0;
+      border: 1px solid color-mix(in srgb, var(--statut) 55%, transparent);
+      background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--statut) 16%, transparent), transparent 72%);
+      box-shadow: inset 0 0 0 4px var(--bg-panel), inset 0 0 0 5px color-mix(in srgb, var(--statut) 30%, transparent);
+    }
+    .horaires-statut-point { width: 11px; height: 11px; box-shadow: 0 0 14px 2px var(--statut); }
+    #vitrine-publique .horaires-statut-texte { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 30px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--statut); }
+    .horaires-statut-sous { font-size: 16px; color: var(--text-mute); margin-top: 6px; }
+    .horaires-statut-heure { border-top: 1px solid rgba(236,215,166,.15); font-size: 13px; color: var(--text-faint); }
+    #vitrine-publique .horaires-registre { max-width: none; border: none; border-radius: 0; overflow: visible; }
+    #vitrine-publique .horaires-ligne { display: flex; align-items: baseline; gap: 12px; padding: 13px 16px; border-bottom: 1px solid rgba(236,215,166,.12); }
+    .horaires-points { flex: 1; min-width: 20px; border-bottom: 1px dotted var(--gold); opacity: .38; transform: translateY(-5px); }
+    #vitrine-publique .horaires-jour { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 23px; font-weight: 700; color: var(--text); }
+    #vitrine-publique .horaires-heures { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 22px; font-weight: 700; color: var(--gold); letter-spacing: 1px; }
+    #vitrine-publique .horaires-ligne.aujourdhui { background: linear-gradient(90deg, rgba(236,215,166,.14), rgba(236,215,166,.02)); border-left: 3px solid var(--gold); padding-left: 13px; }
+    #vitrine-publique .horaires-badge-aujourdhui { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 2px; margin-left: 8px; color: var(--bg); background: linear-gradient(135deg, var(--gold), color-mix(in srgb, var(--gold) 60%, #000)); padding: 3px 9px; border-radius: 2px; vertical-align: middle; }
+
+    /* Réserver */
+    #vitrine-page-reserver label { color: var(--gold); font-family: 'Cinzel', serif; }
+    #vitrine-page-reserver input, #vitrine-page-reserver textarea { background: rgba(0,0,0,.28); border: 1px solid rgba(236,215,166,.35); border-radius: 0; color: var(--text); font-size: 17px; }
+    #vitrine-page-reserver input:focus, #vitrine-page-reserver textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(236,215,166,.14), 0 0 18px rgba(236,215,166,.1); }
+    #vitrine-page-reserver .btn-primary { background: linear-gradient(135deg, var(--gold), color-mix(in srgb, var(--gold) 60%, #000)); color: var(--bg) !important; border: none; border-radius: 0; font-family: 'Cinzel', serif; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; padding: 14px; box-shadow: 0 6px 20px rgba(0,0,0,.35); }
+    #vitrine-page-reserver .btn-primary:hover { filter: brightness(1.1); }
+    #vitrine-page-reserver .btn-ghost { border-radius: 0; }
+    #vitrine-publique .coupon-statut { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 30px; letter-spacing: 3px; text-transform: uppercase; }
+    #vitrine-publique .coupon-diviseur { border-top: 1px solid rgba(236,215,166,.2); }
+
+    /* VIP : trois grades, cadres argent / or / diamant */
+    .vip-grille { display: grid; grid-template-columns: repeat(3, 1fr); gap: 34px; align-items: stretch; }
+    .vip-carte {
+      --t1: #fff1c2; --t2: #e0b955; --t3: #a97c1f; --tglow: 236,200,110;
+      position: relative; display: flex; flex-direction: column; box-sizing: border-box; padding: 40px 34px 30px; text-align: center;
+      border: 2px solid transparent; border-radius: 0;
+      border-image: linear-gradient(135deg, var(--t2), var(--t1), var(--t3), var(--t1), var(--t2)) 1;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(var(--tglow), .13), transparent 58%),
+        var(--velours);
+      box-shadow: inset 0 0 0 7px var(--bg-panel), inset 0 0 0 8px rgba(var(--tglow), .5), 0 12px 34px rgba(0,0,0,.45), 0 0 34px rgba(var(--tglow), .07);
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .vip-carte:hover { transform: translateY(-4px); box-shadow: inset 0 0 0 7px var(--bg-panel), inset 0 0 0 8px rgba(var(--tglow), .75), 0 18px 44px rgba(0,0,0,.55), 0 0 44px rgba(var(--tglow), .16); }
+    .vip-argent { --t1: #f4f6fb; --t2: #aab4cf; --t3: #7e8bab; --tglow: 205,214,238; }
+    .vip-or { --t1: #fff1c2; --t2: #e0b955; --t3: #a97c1f; --tglow: 236,200,110; }
+    .vip-diamant { --t1: #e3f8ff; --t2: #a8dcf5; --t3: #b69cf5; --tglow: 170,215,255; }
+    .vip-carte > .carte-coin { width: 70px; height: 70px; }
+    .vip-tete { padding-top: 6px; }
+    .vip-medaille { width: 54px; height: 54px; margin: 0 auto 12px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--t1); border: 1px solid var(--t2); background: rgba(var(--tglow), .08); box-shadow: 0 0 0 4px rgba(255,255,255,.03), 0 0 22px rgba(var(--tglow), .25); }
+    .vip-grade { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 5px; text-transform: uppercase; color: var(--t2); }
+    .vip-orn { display: block; width: 190px; height: 26px; margin: 10px auto 8px; pointer-events: none; }
+    .vip-nom {
+      font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 38px; letter-spacing: 3px; line-height: 1.1; text-transform: uppercase;
+      background: linear-gradient(120deg, var(--t3) 0%, var(--t1) 35%, var(--t2) 60%, var(--t3) 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent;
+    }
+    .vip-accroche { font-style: italic; font-size: 18px; color: var(--text-mute); margin-top: 10px; }
+    .vip-avantages-titre { display: flex; align-items: center; gap: 14px; margin: 26px 0 14px; font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--t2); }
+    .vip-avantages-titre::before, .vip-avantages-titre::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--t2)); opacity: .6; }
+    .vip-avantages-titre::after { transform: scaleX(-1); }
+    .vip-liste { list-style: none; margin: 0; padding: 0; text-align: left; flex: 1; }
+    .vip-liste li { position: relative; padding: 9px 0 9px 24px; font-size: 17px; line-height: 1.35; color: var(--text); border-bottom: 1px solid rgba(var(--tglow), .12); }
+    .vip-liste li:last-child { border-bottom: none; }
+    .vip-liste li::before { content: '◆'; position: absolute; left: 2px; top: 11px; font-size: 9px; color: var(--t2); }
+    .vip-reste { margin-top: 10px; font-size: 15px; color: var(--text-mute); font-style: italic; }
+    .vip-pied { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 22px; }
+    .vip-pastille { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; padding: 7px 14px; color: #14100a; background: linear-gradient(135deg, var(--t1), var(--t2)); }
+    .vip-pastille-doux { color: var(--t1); background: transparent; border: 1px solid var(--t2); }
+
+    @media (max-width: 1100px) {
+      .vip-grille { grid-template-columns: 1fr; max-width: 520px; margin: 0 auto; }
+    }
+    @media (max-width: 720px) {
+      .orne-cadre { padding: 40px 22px 34px; }
+      #vitrine-publique .orne-carte { padding: 40px 22px 30px; }
+      .orne-cadre > .carte-coin, .orne-carte > .carte-coin { width: 60px; height: 60px; }
+      #vitrine-publique .orne-titre { font-size: 36px; }
+      #vitrine-publique .horaires-jour, #vitrine-publique .horaires-heures { font-size: 19px; }
+      .vip-carte { padding: 36px 22px 26px; }
+      .vip-nom { font-size: 32px; }
+    }
+
     .vitrine-page { transition: opacity .1s ease, transform .1s ease; opacity: 1; transform: translateY(0); }
     .vitrine-page.vit-sortie { opacity: 0; transform: translateY(-12px); }
     .vitrine-page.vit-entree-depart { opacity: 0; transform: translateY(12px); }
@@ -1049,7 +1159,19 @@
             <linearGradient id="gOrHaut" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="260" y2="0">
               <stop offset="0" style="stop-color:var(--pink-deep)"/><stop offset=".5" style="stop-color:var(--gold)"/><stop offset="1" style="stop-color:var(--pink-deep)"/>
             </linearGradient>
-            <symbol id="orn-coin" viewBox="0 0 120 120" fill="none" stroke="url(#gOrCoin)" stroke-linecap="round" stroke-linejoin="round">
+            <linearGradient id="gArgentC" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="120" y2="120">
+              <stop offset="0" stop-color="#f4f6fb"/><stop offset=".5" stop-color="#9aa7c4"/><stop offset="1" stop-color="#e6ebf7"/>
+            </linearGradient>
+            <linearGradient id="gArgentH" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="260" y2="0">
+              <stop offset="0" stop-color="#8896b8"/><stop offset=".5" stop-color="#f4f6fb"/><stop offset="1" stop-color="#8896b8"/>
+            </linearGradient>
+            <linearGradient id="gDiamantC" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="120" y2="120">
+              <stop offset="0" stop-color="#bff0ff"/><stop offset=".5" stop-color="#cdb2ff"/><stop offset="1" stop-color="#8ed6e6"/>
+            </linearGradient>
+            <linearGradient id="gDiamantH" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="260" y2="0">
+              <stop offset="0" stop-color="#9c86e6"/><stop offset=".5" stop-color="#d6f6ff"/><stop offset="1" stop-color="#9c86e6"/>
+            </linearGradient>
+            <g id="orn-coin-g">
               <path d="M3 3 H84 M3 3 V84" stroke-width="2.6"/>
               <path d="M9 9 H46 M9 9 V46" stroke-width="1" opacity=".75"/>
               <path d="M19 19 C19 8 36 8 36 20 C36 30 23 32 22 23 C21.5 18.5 27 18 28.5 21.5" stroke-width="2"/>
@@ -1057,23 +1179,29 @@
               <path d="M12 40 C4 51 9 64 18 68 C22 57 20 46 12 40 Z" stroke-width="1.5"/>
               <path d="M36 36 C47 36 52 47 45 53 C40 57 33 52 37 47" stroke-width="1.6"/>
               <path d="M70 12 C76 8 82 10 84 14 M12 70 C8 76 10 82 14 84" stroke-width="1.4"/>
-              <circle cx="27" cy="27" r="1.7" fill="url(#gOrCoin)" stroke="none"/>
-              <circle cx="88" cy="3" r="2" fill="url(#gOrCoin)" stroke="none"/>
-              <circle cx="3" cy="88" r="2" fill="url(#gOrCoin)" stroke="none"/>
-            </symbol>
-            <g id="orn-demi" fill="none" stroke="url(#gOrHaut)" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="27" cy="27" r="1.7" stroke-width="3.4"/>
+              <circle cx="88" cy="3" r="2" stroke-width="4"/>
+              <circle cx="3" cy="88" r="2" stroke-width="4"/>
+            </g>
+            <symbol id="orn-coin" viewBox="0 0 120 120" fill="none" stroke="url(#gOrCoin)" stroke-linecap="round" stroke-linejoin="round"><use href="#orn-coin-g"/></symbol>
+            <symbol id="orn-coin-argent" viewBox="0 0 120 120" fill="none" stroke="url(#gArgentC)" stroke-linecap="round" stroke-linejoin="round"><use href="#orn-coin-g"/></symbol>
+            <symbol id="orn-coin-diamant" viewBox="0 0 120 120" fill="none" stroke="url(#gDiamantC)" stroke-linecap="round" stroke-linejoin="round"><use href="#orn-coin-g"/></symbol>
+            <g id="orn-demi">
               <path d="M121 17 C108 17 104 6 92 6 C82 6 78 14 84 18 C88 21 93 18 91 14" stroke-width="1.7"/>
               <path d="M121 17 C108 17 104 28 92 28 C82 28 78 20 84 16" stroke-width="1.7"/>
               <path d="M92 6 C80 3 70 10 60 10 C48 10 44 5 30 7 C22 8 16 12 8 12" stroke-width="1.4"/>
               <path d="M92 28 C80 31 70 24 60 24 C48 24 44 29 30 27 C22 26 16 22 8 22" stroke-width="1.4"/>
-              <circle cx="8" cy="17" r="1.6" fill="url(#gOrHaut)" stroke="none"/>
+              <circle cx="8" cy="17" r="1.6" stroke-width="3.2"/>
             </g>
-            <symbol id="orn-haut" viewBox="0 0 260 34" fill="none" stroke="url(#gOrHaut)" stroke-linecap="round" stroke-linejoin="round">
+            <g id="orn-haut-g">
               <path d="M130 3 L138 17 L130 31 L122 17 Z" stroke-width="1.7"/>
-              <circle cx="130" cy="17" r="2.2" fill="url(#gOrHaut)" stroke="none"/>
+              <circle cx="130" cy="17" r="2.2" stroke-width="4.4"/>
               <use href="#orn-demi"/>
               <use href="#orn-demi" transform="matrix(-1 0 0 1 260 0)"/>
-            </symbol>
+            </g>
+            <symbol id="orn-haut" viewBox="0 0 260 34" fill="none" stroke="url(#gOrHaut)" stroke-linecap="round" stroke-linejoin="round"><use href="#orn-haut-g"/></symbol>
+            <symbol id="orn-haut-argent" viewBox="0 0 260 34" fill="none" stroke="url(#gArgentH)" stroke-linecap="round" stroke-linejoin="round"><use href="#orn-haut-g"/></symbol>
+            <symbol id="orn-haut-diamant" viewBox="0 0 260 34" fill="none" stroke="url(#gDiamantH)" stroke-linecap="round" stroke-linejoin="round"><use href="#orn-haut-g"/></symbol>
           </defs>
         </svg>
     <div class="vitrine-header-fixe">
@@ -1118,9 +1246,15 @@
       </div>
 
       <div id="vitrine-page-horaires" class="vitrine-page hidden">
-        <h2>Horaires</h2>
-        <div class="horaires-statut-hero" id="horaires-statut-hero"></div>
-        <div class="horaires-registre" id="vitrine-horaires"></div>
+        <div class="orne-page">
+          <div class="orne-cadre">
+            <svg class="carte-coin hg" aria-hidden="true"><use href="#orn-coin"/></svg><svg class="carte-coin hd" aria-hidden="true"><use href="#orn-coin"/></svg><svg class="carte-coin bg" aria-hidden="true"><use href="#orn-coin"/></svg><svg class="carte-coin bd" aria-hidden="true"><use href="#orn-coin"/></svg>
+            <div class="orne-entete"><svg class="orne-orn" aria-hidden="true"><use href="#orn-haut"/></svg><h2 class="orne-titre">Horaires</h2><div class="orne-sous">Quand la nuit commence</div></div>
+            <div class="horaires-statut-hero" id="horaires-statut-hero"></div>
+            <div class="horaires-registre" id="vitrine-horaires"></div>
+            <svg class="orne-pied" aria-hidden="true"><use href="#orn-haut"/></svg>
+          </div>
+        </div>
       </div>
 
       <div id="vitrine-page-carte" class="vitrine-page hidden">
@@ -1134,15 +1268,18 @@
       </div>
 
       <div id="vitrine-page-vip" class="vitrine-page hidden">
-        <h2>Offres VIP</h2>
-        <div class="grid grid-3" id="vitrine-vip"></div>
+        <div class="orne-page orne-large">
+          <div class="orne-entete"><svg class="orne-orn" aria-hidden="true"><use href="#orn-haut"/></svg><h2 class="orne-titre">Offres VIP</h2><div class="orne-sous">Le cercle privilégié du Unicorn</div></div>
+          <div class="vip-grille" id="vitrine-vip"></div>
+        </div>
       </div>
 
       <div id="vitrine-page-reserver" class="vitrine-page hidden">
-        <h2>Réserver une table</h2>
-        <div class="small mb16">On te confirme par téléphone dès que possible.</div>
+        <div class="orne-page orne-moyen">
+        <div class="orne-entete"><svg class="orne-orn" aria-hidden="true"><use href="#orn-haut"/></svg><h2 class="orne-titre">Réserver une table</h2><div class="orne-sous">On te confirme par téléphone dès que possible.</div></div>
         <div class="grid grid-2" id="reserver-grille">
-          <div class="card" style="position:relative;">
+          <div class="card orne-carte" style="position:relative;">
+            <svg class="carte-coin hg" aria-hidden="true"><use href="#orn-coin"/></svg><svg class="carte-coin hd" aria-hidden="true"><use href="#orn-coin"/></svg><svg class="carte-coin bg" aria-hidden="true"><use href="#orn-coin"/></svg><svg class="carte-coin bd" aria-hidden="true"><use href="#orn-coin"/></svg>
             <div id="resa-form-verrou" class="hidden" style="position:absolute;inset:0;background:rgba(0,0,0,.75);border-radius:12px;z-index:2;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;">
               <div class="small" id="resa-form-verrou-texte"></div>
             </div>
@@ -1165,12 +1302,19 @@
           </div>
           <div id="reserver-coupon"></div>
         </div>
+        </div>
 
       </div>
 
       <div id="vitrine-page-apropos" class="vitrine-page hidden">
-        <h2>À propos</h2>
-        <div class="small" id="vitrine-apropos" style="white-space:pre-line;max-width:700px;"></div>
+        <div class="orne-page">
+          <div class="orne-cadre">
+            <svg class="carte-coin hg" aria-hidden="true"><use href="#orn-coin"/></svg><svg class="carte-coin hd" aria-hidden="true"><use href="#orn-coin"/></svg><svg class="carte-coin bg" aria-hidden="true"><use href="#orn-coin"/></svg><svg class="carte-coin bd" aria-hidden="true"><use href="#orn-coin"/></svg>
+            <div class="orne-entete"><svg class="orne-orn" aria-hidden="true"><use href="#orn-haut"/></svg><h2 class="orne-titre">À propos</h2><div class="orne-sous">Notre histoire</div></div>
+            <div class="orne-texte" id="vitrine-apropos" style="white-space:pre-line;"></div>
+            <svg class="orne-pied" aria-hidden="true"><use href="#orn-haut"/></svg>
+          </div>
+        </div>
       </div>
 
       <div id="vitrine-page-moncompte" class="vitrine-page hidden">
@@ -3916,7 +4060,7 @@
       const heroEl = document.getElementById('horaires-statut-hero');
       if (heroEl) {
         const heureActuelle = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-        heroEl.style.borderColor = statut.ouvert ? 'var(--green)' : 'var(--red)';
+        heroEl.style.setProperty('--statut', statut.ouvert ? 'var(--green)' : 'var(--red)');
         heroEl.innerHTML = `
           <span class="horaires-statut-point" style="background:${statut.ouvert ? 'var(--green)' : 'var(--red)'};"></span>
           <span class="horaires-statut-texte">${statut.ouvert ? 'Ouvert' : 'Fermé'}</span>
@@ -3927,6 +4071,7 @@
       document.getElementById('vitrine-horaires').innerHTML = horaires.map(h => `
         <div class="horaires-ligne${h.Jour === jourAujourdhuiNom ? ' aujourdhui' : ''}">
           <span class="horaires-jour">${escapeHtml(h.Jour)}${h.Jour === jourAujourdhuiNom ? ' <span class="horaires-badge-aujourdhui">Aujourd\'hui</span>' : ''}</span>
+          <span class="horaires-points"></span>
           <span class="horaires-heures" style="${estValeurVraie_(h.Ouvert) ? '' : 'color:var(--text-faint);'}">${estValeurVraie_(h.Ouvert) ? escapeHtml(h.HeureOuverture) + ' – ' + escapeHtml(h.HeureFermeture) : 'Fermé'}</span>
         </div>`).join('') || '<div class="small" style="padding:20px;">Horaires à venir.</div>';
 
@@ -3988,12 +4133,57 @@
             </div>`).join('')
         : '<div class="small mt16" style="grid-column:1/-1;text-align:center;">La carte arrive bientôt.</div>';
 
-      document.getElementById('vitrine-vip').innerHTML = (DATA.vipOffres || []).map(o => `
-        <div class="card">
-          <b>${escapeHtml(o.Nom)}</b>
-          <div class="small mt10">${o.DuréeJours} jours${Number(o.Prix) > 0 ? ' - ' + money(o.Prix) : ''}</div>
-          ${o.Description ? '<div class="small mt10">' + escapeHtml(o.Description) + '</div>' : ''}
-        </div>`).join('') || '<div class="small">Aucune offre VIP publiée pour l\'instant.</div>';
+      const normVip_ = t => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+      const ROMAINS_VIP = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+      const TIERS_VIP = ['argent', 'or', 'diamant'];
+      const SUFFIXE_SYM = { argent: '-argent', or: '', diamant: '-diamant' };
+      const GLYPHE_VIP = { argent: '✧', or: '✦', diamant: '◆' };
+      const detecterTierVip_ = (nom, idx) => {
+        const n = normVip_(nom);
+        if (/diamond|diamant/.test(n)) return 'diamant';
+        if (/silver|argent/.test(n)) return 'argent';
+        if (/gold|\bor\b|dore/.test(n)) return 'or';
+        return TIERS_VIP[Math.min(idx, TIERS_VIP.length - 1)];
+      };
+      const analyserDescVip_ = txt => {
+        const lignes = String(txt || '').split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+        let accroche = ''; const avantages = []; const reste = [];
+        lignes.forEach(l => {
+          if (/^[*•\-]\s+/.test(l)) avantages.push(l.replace(/^[*•\-]\s+/, ''));
+          else if (!accroche && !avantages.length) accroche = l;
+          else reste.push(l);
+        });
+        return { accroche, avantages, reste };
+      };
+      const offresVip = DATA.vipOffres || [];
+      document.getElementById('vitrine-vip').innerHTML = offresVip.map((o, idx) => {
+        const tier = detecterTierVip_(o.Nom, idx);
+        const sym = SUFFIXE_SYM[tier];
+        const d = analyserDescVip_(o.Description);
+        const red = Number(o.ReductionPourcent) || 0;
+        const prix = Number(o.Prix) > 0 ? money(o.Prix) : '';
+        const coin = c => '<svg class="carte-coin ' + c + '" aria-hidden="true"><use href="#orn-coin' + sym + '"/></svg>';
+        return `
+        <div class="vip-carte vip-${tier}">
+          ${coin('hg')}${coin('hd')}${coin('bg')}${coin('bd')}
+          <div class="vip-tete">
+            <div class="vip-medaille">${GLYPHE_VIP[tier]}</div>
+            <div class="vip-grade">Grade ${ROMAINS_VIP[idx] || (idx + 1)}</div>
+            <svg class="vip-orn" aria-hidden="true"><use href="#orn-haut${sym}"/></svg>
+            <div class="vip-nom">${escapeHtml(o.Nom)}</div>
+            ${d.accroche ? '<div class="vip-accroche">' + escapeHtml(d.accroche) + '</div>' : ''}
+          </div>
+          <div class="vip-avantages-titre"><span>Avantages</span></div>
+          <ul class="vip-liste">
+            ${d.avantages.map(a => '<li>' + escapeHtml(a) + '</li>').join('') || ''}
+          </ul>
+          ${d.reste.length ? '<div class="vip-reste">' + d.reste.map(escapeHtml).join('<br>') + '</div>' : ''}
+          <div class="vip-pied">
+            ${red > 0 ? '<span class="vip-pastille">-' + red + ' % sur la carte</span>' : ''}
+            <span class="vip-pastille vip-pastille-doux">${escapeHtml(String(o.DuréeJours))} jours${prix ? ' · ' + prix : ''}</span>
+          </div>
+        </div>`;
+      }).join('') || '<div class="orne-sous" style="grid-column:1/-1;text-align:center;">Aucune offre VIP publiée pour l\'instant.</div>';
 
       const contactDisponible = !!DATA.infoPublique;
       if (contactDisponible) document.getElementById('vitrine-contact').textContent = DATA.infoPublique;
@@ -4111,7 +4301,7 @@
       const couponEl = document.getElementById('reserver-coupon');
       const verrouEl = document.getElementById('resa-form-verrou');
       if (!estConnecte) {
-        if (couponEl) couponEl.innerHTML = '<div class="small">Connecte-toi pour réserver et suivre le statut de ta demande ici.</div>';
+        if (couponEl) couponEl.innerHTML = '<div class="coupon-carte"><div class="small">Connecte-toi pour réserver et suivre le statut de ta demande ici.</div></div>';
         if (verrouEl) verrouEl.classList.add('hidden');
         return;
       }
@@ -6601,7 +6791,7 @@
             <div><b>${escapeHtml(o.Nom)}</b> - ${o.DuréeJours}j${Number(o.Prix) > 0 ? ' - ' + money(o.Prix) : ''}${Number(o.ReductionPourcent) > 0 ? ' - <span class="kpi-gold">' + o.ReductionPourcent + '% de réduction</span>' : ''}</div>
             <div><a class="linklike" onclick="demarrerEditionVipOffre('${o.ID}')">Modifier</a> <a class="linklike" onclick="supprimerVipOffreUI('${o.ID}')">Supprimer</a></div>
           </div>
-          ${o.Description ? '<div class="small mt10">' + escapeHtml(o.Description) + '</div>' : ''}
+          ${o.Description ? '<div class="small mt10" style="white-space:pre-line;">' + escapeHtml(o.Description) + '</div>' : ''}
         </div>`).join('') || '<div class="small">Aucune offre créée pour l\'instant.</div>';
     }
     function demarrerEditionVipOffre(id) {
