@@ -60,7 +60,7 @@
               }
               // Appels de lecture / connexion : on réessaie automatiquement (cold start d'Apps Script, réseau capricieux)
               // au lieu d'obliger l'utilisateur à recharger la page. Jamais pour les écritures (risque de doublon).
-              var rejouable = /^(get|peut|identifiant|heartbeat|login)/.test(String(nomProp));
+              var rejouable = /^(get|peut|identifiant|heartbeat|login|reprendre)/.test(String(nomProp));
               var corps = JSON.stringify({ fonction: String(nomProp), args: args });
               function appeler(essai) {
                 return fetch(URL_API_APPS_SCRIPT, {
@@ -411,9 +411,10 @@
     #login-screen { background: var(--bg); }
     #login-screen.plein-ecran { position: relative; min-height: 100vh; flex-direction: column; gap: 18px; overflow: hidden; }
     #login-screen::before, #login-screen::after {
-      content: ''; position: absolute; width: 480px; height: 480px; border-radius: 50%; filter: blur(90px); opacity: .22; z-index: 0;
+      content: ''; position: absolute; width: 480px; height: 480px; border-radius: 50%; filter: blur(90px); opacity: .22; z-index: 0; pointer-events: none;
       animation: derive-lente 14s ease-in-out infinite alternate;
     }
+    #login-screen > .modal-card { position: relative; z-index: 1; }
     #login-screen::before { background: var(--pink); top: -160px; left: -140px; }
     #login-screen::after { background: var(--gold); bottom: -160px; right: -140px; animation-delay: -7s; }
     @keyframes derive-lente { from { transform: translate(0, 0) scale(1); } to { transform: translate(40px, 30px) scale(1.15); } }
@@ -981,6 +982,13 @@
     .chat-compose button { width: 34px; height: 34px; border-radius: 50%; background: var(--pink); color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-size: 14px; transition: opacity .12s; }
     .chat-compose button:hover { opacity: .85; }
     .notif-bell { position: relative; cursor: pointer; font-size: 18px; user-select: none; }
+    .rester-connecte { display: flex; align-items: center; gap: 10px; margin-top: 14px; cursor: pointer; user-select: none; font-size: 14px; color: var(--text-mute); }
+    .rester-connecte input { position: absolute; opacity: 0; width: 0; height: 0; }
+    .rester-case { width: 20px; height: 20px; flex: none; border: 1px solid var(--border); background: var(--bg-card2); border-radius: 5px; display: inline-flex; align-items: center; justify-content: center; transition: background .15s ease, border-color .15s ease; }
+    .rester-connecte input:checked + .rester-case { background: linear-gradient(135deg, var(--gold), var(--pink-deep)); border-color: var(--gold); }
+    .rester-connecte input:checked + .rester-case::after { content: ''; width: 6px; height: 11px; margin-top: -2px; border: solid var(--bg); border-width: 0 2px 2px 0; transform: rotate(45deg); }
+    .rester-connecte input:focus-visible + .rester-case { outline: 2px solid var(--gold); outline-offset: 2px; }
+    .rester-connecte:hover { color: var(--text); }
     .notif-badge { position: absolute; top: -6px; right: -8px; background: var(--red); color: white; font-size: 10px; font-weight: 700; border-radius: 10px; padding: 1px 5px; min-width: 15px; text-align: center; }
     .notif-panel { position: absolute; top: 30px; right: -10px; width: 340px; max-height: 460px; overflow-y: auto; background: var(--bg-panel); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 12px 32px rgba(0,0,0,.4); z-index: 900; padding: 10px; }
     .notif-panel-header { display: flex; justify-content: space-between; align-items: center; padding: 4px 8px 10px; }
@@ -1442,6 +1450,11 @@
             <button type="button" class="eye-btn" onclick="togglePasswordVisibility('login-pin', this)">Afficher</button>
           </div>
         </div>
+        <label class="rester-connecte" for="login-rester">
+          <input type="checkbox" id="login-rester">
+          <span class="rester-case" aria-hidden="true"></span>
+          <span data-i18n="login.rester">Rester connecté</span>
+        </label>
         <button class="btn-primary btn-block mt16" onclick="doLogin()" data-i18n="login.enter">Entrer</button>
         <div class="err" id="login-err"></div>
         <div class="small mt16" style="text-align:center;" id="login-lien-inscription">
@@ -3518,7 +3531,7 @@
         'settings.left': 'Gauche', 'settings.right': 'Droite',
         'theme.unicorn': 'Unicorn', 'theme.nuitroyale': 'Nuit Royale', 'theme.clair': 'Clair', 'theme.champagne': 'Champagne Noir', 'theme.opale': 'Lune Opale',
         'lang.fr': 'Français', 'lang.en': 'English', 'lang.es': 'Español', 'lang.it': 'Italiano',
-        'login.identifiant': 'Identifiant', 'login.password': 'Mot de passe',
+        'login.identifiant': 'Identifiant', 'login.password': 'Mot de passe', 'login.rester': 'Rester connecté',
         'login.remember': 'Enregistrer mon identifiant', 'login.enter': 'Entrer'
       },
       en: {
@@ -3533,7 +3546,7 @@
         'settings.left': 'Left', 'settings.right': 'Right',
         'theme.unicorn': 'Unicorn', 'theme.nuitroyale': 'Nuit Royale', 'theme.clair': 'Light', 'theme.champagne': 'Champagne Noir', 'theme.opale': 'Lune Opale',
         'lang.fr': 'Français', 'lang.en': 'English', 'lang.es': 'Español', 'lang.it': 'Italiano',
-        'login.identifiant': 'Username', 'login.password': 'Password',
+        'login.identifiant': 'Username', 'login.password': 'Password', 'login.rester': 'Stay signed in',
         'login.remember': 'Remember my username', 'login.enter': 'Enter'
       },
       es: {
@@ -3548,7 +3561,7 @@
         'settings.left': 'Izquierda', 'settings.right': 'Derecha',
         'theme.unicorn': 'Unicorn', 'theme.nuitroyale': 'Nuit Royale', 'theme.clair': 'Claro', 'theme.champagne': 'Champagne Noir', 'theme.opale': 'Lune Opale',
         'lang.fr': 'Français', 'lang.en': 'English', 'lang.es': 'Español', 'lang.it': 'Italiano',
-        'login.identifiant': 'Usuario', 'login.password': 'Contraseña',
+        'login.identifiant': 'Usuario', 'login.password': 'Contraseña', 'login.rester': 'Mantener la sesión',
         'login.remember': 'Recordar mi usuario', 'login.enter': 'Entrar'
       },
       it: {
@@ -3563,7 +3576,7 @@
         'settings.left': 'Sinistra', 'settings.right': 'Destra',
         'theme.unicorn': 'Unicorn', 'theme.nuitroyale': 'Nuit Royale', 'theme.clair': 'Chiaro', 'theme.champagne': 'Champagne Noir', 'theme.opale': 'Lune Opale',
         'lang.fr': 'Français', 'lang.en': 'English', 'lang.es': 'Español', 'lang.it': 'Italiano',
-        'login.identifiant': 'Nome utente', 'login.password': 'Password',
+        'login.identifiant': 'Nome utente', 'login.password': 'Password', 'login.rester': 'Resta connesso',
         'login.remember': 'Ricorda il mio nome utente', 'login.enter': 'Entra'
       }
     };
@@ -3821,6 +3834,7 @@
     let DERNIER_NB_ABSENCES_ATTENTE = null;
     let DERNIER_NB_RESA_ATTENTE = null;
     let DERNIERE_DATE_COMPTE_CLIENT = null;
+    let DERNIER_NB_DEMANDES_VIP = null;
     
     const DataStore = {
       heartbeat: function (onResult) {
@@ -3853,6 +3867,18 @@
             document.getElementById('nouvelle-resa-modal').classList.remove('hidden');
           }
           DERNIER_NB_RESA_ATTENTE = resultat.reservationsEnAttente;
+        }
+        if (CURRENT_USER.typeCompte !== 'client') {
+          DATA.comptesClientsRecents = resultat.comptesClientsRecents || [];
+          DATA.vipDemandesAttente = resultat.demandesVipEnAttente || [];
+          DATA.vipExpirant = resultat.vipExpirant || [];
+          const nbDemandesVip = DATA.vipDemandesAttente.length;
+          if (DERNIER_NB_DEMANDES_VIP !== null && nbDemandesVip > DERNIER_NB_DEMANDES_VIP) {
+            jouerSonNotification('compteClient');
+            const derniere = DATA.vipDemandesAttente[0];
+            showToast('Nouvelle demande VIP' + (derniere ? ' : ' + derniere.nom + ' (' + derniere.offre + ')' : ''));
+          }
+          DERNIER_NB_DEMANDES_VIP = nbDemandesVip;
         }
         if (CURRENT_USER.typeCompte !== 'client' && resultat.dernierCompteClient && resultat.dernierCompteClient.date) {
           const dateCompte = new Date(resultat.dernierCompteClient.date).getTime();
@@ -3916,12 +3942,48 @@
       if (CURRENT_USER.typeCompte !== 'client') {
         (DATA.reservations || []).filter(r => r.Statut === 'En attente').forEach(r => {
           notifs.push({
-            id: 'resa-attente-' + r.ID, categorie: 'Réservations', texte: r.Nom + ' a demandé une réservation le ' + fmtJour_(r.DateReservation), couleur: 'var(--gold)',
+            id: 'resa-attente-' + r.ID, categorie: 'Réservations', texte: r.Nom + ' a demandé une réservation le ' + fmtJour_(r.DateReservation) + (r.Commande ? ' (avec précommande)' : ''), couleur: 'var(--gold)',
             cible: function () {
               switchTab('gestion-client', document.getElementById('nav-tab-gestion-client'));
               const btnResa = document.querySelector('#gc-subnav button[onclick*="reservations"]');
               if (btnResa) switchGestionClientSection('reservations', btnResa);
             }
+          });
+        });
+      }
+      if (CURRENT_USER.typeCompte !== 'client') {
+        // Nouveaux comptes clients (7 derniers jours) : disparaissent quand on clique dessus.
+        (DATA.comptesClientsRecents || []).forEach(c => {
+          const id = 'client-' + c.ID;
+          if (vues.indexOf(id) !== -1) return;
+          notifs.push({
+            id: id, categorie: 'Comptes clients', texte: 'Nouveau compte client : ' + c.nom, couleur: 'var(--cyan)',
+            cible: function () {
+              switchTab('gestion-client', document.getElementById('nav-tab-gestion-client'));
+              const btn = document.querySelector('#gc-subnav button[onclick*="comptes-clients"]');
+              if (btn) switchGestionClientSection('comptes-clients', btn);
+            }
+          });
+        });
+        // Demandes VIP à traiter : restent tant qu'elles ne sont ni acceptées ni refusées.
+        (DATA.vipDemandesAttente || []).forEach(d => {
+          notifs.push({
+            id: 'vipdem-' + d.ID, categorie: 'Demandes VIP', texte: d.nom + ' demande ' + d.offre, couleur: 'var(--gold)',
+            cible: function () {
+              switchTab('ventes', document.getElementById('nav-tab-ventes'));
+              const btn = Array.from(document.querySelectorAll('#ventes-mode-boutons button')).find(b => b.textContent.trim() === 'VIP');
+              if (btn) changerModeVente('vip', btn);
+            }
+          });
+        });
+        // Abonnements VIP qui expirent dans 3 jours ou moins.
+        (DATA.vipExpirant || []).forEach(m => {
+          const id = 'vipexp-' + m.ID + '-' + String(m.expiration).slice(0, 10);
+          if (vues.indexOf(id) !== -1) return;
+          const jours = Math.max(1, Math.ceil((new Date(m.expiration).getTime() - Date.now()) / 86400000));
+          notifs.push({
+            id: id, categorie: 'VIP', texte: m.nom + ' : ' + m.offre + ' expire dans ' + jours + ' jour' + (jours > 1 ? 's' : ''), couleur: 'var(--red)',
+            cible: function () { switchTab('gestion-client', document.getElementById('nav-tab-gestion-client')); }
           });
         });
       }
@@ -4099,6 +4161,12 @@
       document.body.appendChild(ecran);
     }
 
+    // ===== Rester connecté =====
+    function memoriserSessionLongue_(token) { try { localStorage.setItem('unicorn_session_longue', JSON.stringify({ token: token })); } catch (e) {  } }
+    function oublierSessionLongueLocale_() { try { localStorage.removeItem('unicorn_session_longue'); } catch (e) {  } }
+    function sessionLongueLocale_() {
+      try { const j = JSON.parse(localStorage.getItem('unicorn_session_longue') || 'null'); return (j && j.token) ? j.token : null; } catch (e) { return null; }
+    }
     function onDataLoaded(data) {
       DATA = data;
       if (data.faviconVitrine) {
@@ -4110,6 +4178,25 @@
           document.documentElement.setAttribute('data-theme', themeCanon_(data.themeParDefaut));
         }
       } catch (e) {  }
+      const jeton = sessionLongueLocale_();
+      if (jeton) {
+        afficherChargement('Reconnexion...');
+        google.script.run.withSuccessHandler(function (compte) {
+          apresConnexionReussie(compte);
+        }).withFailureHandler(function (err) {
+          const msg = (err && (err.message || String(err))) || '';
+          const lower = msg.toLowerCase();
+          // Session refusée par le serveur : on l'oublie. Simple souci réseau : on la garde pour la prochaine fois.
+          if (/reconnexion|session|introuvable|viré|suspendu|compte/.test(lower)) oublierSessionLongueLocale_();
+          if (lower.indexOf('suspendu') !== -1 || lower.indexOf('viré') !== -1) { afficherEcranSuspendu({ vire: lower.indexOf('viré') !== -1, detailBrut: msg }); return; }
+          masquerChargement();
+          suiteDonneesChargees_(data);
+        }).reprendreSession(jeton);
+        return;
+      }
+      suiteDonneesChargees_(data);
+    }
+    function suiteDonneesChargees_(data) {
       if (CONNEXION_AUTO) {
         afficherChargement('Connexion automatique...');
         google.script.run.withSuccessHandler(function (employe) {
@@ -5263,8 +5350,11 @@
       if (!identifiant) { errEl.textContent = 'Entre ton identifiant.'; return; }
       try { localStorage.setItem('unicorn_saved_identifiant', identifiant); } catch (e) {  }
       afficherChargement('Connexion...');
+      const rester = !!(document.getElementById('login-rester') && document.getElementById('login-rester').checked);
       google.script.run.withSuccessHandler(function (employe) {
         sauvegarderSessionAutoLogin(identifiant, pwd);
+        if (rester && employe && employe.sessionToken) memoriserSessionLongue_(employe.sessionToken);
+        else oublierSessionLongueLocale_();
         apresConnexionReussie(employe);
       }).withFailureHandler(function (err) {
         masquerChargement();
@@ -5272,7 +5362,7 @@
         const lower = msg.toLowerCase();
             if (lower.indexOf('suspendu') !== -1 || lower.indexOf('viré') !== -1) { afficherEcranSuspendu({ vire: lower.indexOf('viré') !== -1, detailBrut: msg }); return; }
         errEl.textContent = msg;
-      }).loginAvecIdentifiant(identifiant, pwd);
+      }).loginAvecIdentifiant(identifiant, pwd, rester);
     }
 
     function doBootstrap() {
@@ -5300,6 +5390,14 @@
       confirmerActionAvantExecution('Déconnexion', 'Êtes-vous sûr de vouloir vous déconnecter ?', logoutReel_, true);
     }
     function logoutReel_() {
+      // Rester connecté : on invalide aussi la session côté serveur (sauf quand le personnel consulte le compte d'un client).
+      try {
+        const tokenLocal = sessionLongueLocale_();
+        if (CURRENT_USER && CURRENT_USER.sessionToken && !CURRENT_USER.enTantQue) {
+          google.script.run.withSuccessHandler(function () {}).withFailureHandler(function () {}).deconnecterSession(CURRENT_USER.sessionToken);
+          if (tokenLocal && tokenLocal === CURRENT_USER.sessionToken) oublierSessionLongueLocale_();
+        }
+      } catch (e) {  }
       CURRENT_USER = null; CART = [];
       clearInterval(TIMER_SURVEILLANCE_GENERALE);
       try { localStorage.removeItem('unicorn_auto_login'); } catch (e) {  }
