@@ -1354,7 +1354,7 @@
             <label>Nom</label>
             <input id="resa-nom" placeholder="Ton nom">
             <label class="mt10">Téléphone</label>
-            <input id="resa-telephone" placeholder="555-XXX-XXXX" value="555-" oninput="formaterTelephoneResa_(this)" onfocus="formaterTelephoneResa_(this)">
+            <input id="resa-telephone" placeholder="555-XXX-XXX ou 555-XXX-XXXX" value="555-" oninput="formaterTelephoneResa_(this)" onfocus="formaterTelephoneResa_(this)">
             <div class="grid grid-2 mt10">
               <div><label>Date</label><input id="resa-date" type="date"></div>
               <div><label>Heure</label><input id="resa-heure" type="time"></div>
@@ -1409,7 +1409,7 @@
           <h2>Mon compte</h2>
           <div class="small mb10">Modifier ton numéro de téléphone.</div>
           <label>Téléphone</label>
-          <input id="moncompte-telephone" placeholder="Ex: 555-0192">
+          <input id="moncompte-telephone" placeholder="555-XXX-XXX ou 555-XXX-XXXX" oninput="formaterTelephone_(this)">
           <button class="btn-primary btn-block mt16" onclick="enregistrerTelephoneClientUI()">Enregistrer</button>
           <div class="err" id="moncompte-telephone-err"></div>
           <button class="btn-ghost btn-block mt16" id="btn-changer-mdp-client" onclick="ouvrirChangementMdpClient(false)">Changer mon mot de passe</button>
@@ -1460,7 +1460,7 @@
         <label class="mt10">Prénom</label>
         <input id="inscription-prenom" placeholder="Ton prénom">
         <label class="mt10">Téléphone</label>
-        <input id="inscription-telephone" placeholder="Ex: 555-0192">
+        <input id="inscription-telephone" placeholder="555-XXX-XXX ou 555-XXX-XXXX" value="555-" oninput="formaterTelephone_(this)" onfocus="formaterTelephone_(this)">
         <button class="btn-primary btn-block mt16" onclick="creerCompteClientUI()">Créer mon compte</button>
         <div class="err" id="inscription-err"></div>
         <div class="small mt16" style="text-align:center;"><a class="linklike" onclick="basculerInscriptionClient()">Retour à la connexion</a></div>
@@ -2295,7 +2295,7 @@
             </div>
             <div class="small mt10">Identifiant : <b id="cc-identifiant-apercu" class="kpi-gold">-</b></div>
             <label class="mt10">Téléphone <span class="small">(facultatif)</span></label>
-            <input id="cc-telephone" placeholder="Ex: 555-0192">
+            <input id="cc-telephone" placeholder="555-XXX-XXX ou 555-XXX-XXXX" value="555-" oninput="formaterTelephone_(this)" onfocus="formaterTelephone_(this)">
             <button class="btn-primary btn-block mt16" onclick="creerCompteClientParEmployeUI()">Créer le compte</button>
             <div class="err" id="cc-err"></div>
             <div id="cc-mdp-revele" class="card hidden mt16" style="border-color:var(--gold);">
@@ -3916,7 +3916,7 @@
       if (CURRENT_USER.typeCompte !== 'client') {
         (DATA.reservations || []).filter(r => r.Statut === 'En attente').forEach(r => {
           notifs.push({
-            id: 'resa-attente-' + r.ID, categorie: 'Réservations', texte: r.Nom + ' a demandé une réservation le ' + fmtDate(r.DateReservation), couleur: 'var(--gold)',
+            id: 'resa-attente-' + r.ID, categorie: 'Réservations', texte: r.Nom + ' a demandé une réservation le ' + fmtJour_(r.DateReservation), couleur: 'var(--gold)',
             cible: function () {
               switchTab('gestion-client', document.getElementById('nav-tab-gestion-client'));
               const btnResa = document.querySelector('#gc-subnav button[onclick*="reservations"]');
@@ -4485,8 +4485,8 @@
               <div class="coupon-statut" style="color:${STATUT_COULEUR[r.Statut] || 'var(--text)'};">${escapeHtml(r.Statut)}</div>
               <div class="coupon-diviseur"></div>
               <div style="text-align:left;">
-                <div class="billet-ligne"><span>Date</span><b>${fmtDate(r.DateReservation)}</b></div>
-                <div class="billet-ligne"><span>Heure</span><b>${escapeHtml(r.Heure)}</b></div>
+                <div class="billet-ligne"><span>Date</span><b>${fmtJour_(r.DateReservation)}</b></div>
+                <div class="billet-ligne"><span>Heure</span><b>${escapeHtml(fmtHeureResa_(r.Heure))}</b></div>
                 <div class="billet-ligne"><span>Personnes</span><b>${r.NbPersonnes}</b></div>
               </div>
               ${r.Commande ? '<div class="coupon-commande"><div class="small" style="text-transform:uppercase;letter-spacing:2px;">Précommande</div><div>' + escapeHtml(r.Commande) + '</div>' + (prixAffichesResa_() && Number(r.TotalCommande) > 0 ? '<div class="kpi-gold" style="font-weight:700;">Total estimé : ' + money(r.TotalCommande) + '</div>' : '') + '</div>' : ''}
@@ -4545,8 +4545,8 @@
       document.getElementById('resa-id-modif').value = id;
       document.getElementById('resa-nom').value = r.Nom;
       document.getElementById('resa-telephone').value = r.Téléphone;
-      document.getElementById('resa-date').value = r.DateReservation ? new Date(r.DateReservation).toISOString().slice(0, 10) : '';
-      document.getElementById('resa-heure').value = r.Heure;
+      document.getElementById('resa-date').value = r.DateReservation ? (function (d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); })(new Date(r.DateReservation)) : '';
+      document.getElementById('resa-heure').value = fmtHeureResa_(r.Heure) === '-' ? '' : fmtHeureResa_(r.Heure);
       document.getElementById('resa-nb').value = r.NbPersonnes;
       document.getElementById('resa-commentaire').value = r.Commentaire || '';
       RESA_PANIER = {};
@@ -4577,8 +4577,8 @@
       if (!r || r.ID !== id) return;
       document.getElementById('billet-marque').textContent = DATA.nomEntreprise || "UNICORN";
       document.getElementById('billet-nom').textContent = r.Nom;
-      document.getElementById('billet-date').textContent = fmtDate(r.DateReservation);
-      document.getElementById('billet-heure').textContent = r.Heure;
+      document.getElementById('billet-date').textContent = fmtJour_(r.DateReservation);
+      document.getElementById('billet-heure').textContent = fmtHeureResa_(r.Heure);
       document.getElementById('billet-nb').textContent = r.NbPersonnes;
       document.getElementById('billet-code').textContent = r.NumeroReservation || '';
       document.getElementById('billet-modal').classList.remove('hidden');
@@ -4587,6 +4587,7 @@
       const telephone = document.getElementById('moncompte-telephone').value.trim();
       const errEl = document.getElementById('moncompte-telephone-err');
       errEl.textContent = '';
+      if (!telephoneResaValide_(telephone)) { errEl.textContent = MSG_TELEPHONE_; return; }
       google.script.run.withSuccessHandler(function () {
         CURRENT_USER.Téléphone = telephone;
         showToast('Téléphone mis à jour.');
@@ -4608,6 +4609,7 @@
       errEl.textContent = '';
       if (!identifiant || !pwd || !nom || !prenom || !telephone) { errEl.textContent = 'Tous les champs sont obligatoires : identifiant, mot de passe, nom, prénom et téléphone.'; return; }
       if (pwd.length < 6) { errEl.textContent = 'Le mot de passe doit faire au moins 6 caractères.'; return; }
+      if (!telephoneResaValide_(telephone)) { errEl.textContent = MSG_TELEPHONE_; return; }
       INSCRIPTION_CLIENT_EN_COURS = true;
       afficherChargement('Création du compte...');
       google.script.run.withSuccessHandler(function () {
@@ -4632,7 +4634,7 @@
       document.getElementById('inscription-pwd').value = '';
       document.getElementById('inscription-nom').value = '';
       document.getElementById('inscription-prenom').value = '';
-      document.getElementById('inscription-telephone').value = '';
+      document.getElementById('inscription-telephone').value = '555-';
     }
     let RESA_EN_COURS = false;
 
@@ -4645,8 +4647,23 @@
       if (chiffres.length > 3) formatte += '-' + chiffres.slice(3);
       input.value = formatte;
     }
+    const MSG_TELEPHONE_ = 'Le téléphone doit être au format 555-XXX-XXX ou 555-XXX-XXXX (3 ou 4 chiffres à la fin).';
+    const formaterTelephone_ = formaterTelephoneResa_;
+    // Heure d'une réservation : "22:00" tel quel ; une date ISO (ancien format de cellule) est reconvertie en heure locale.
+    function fmtHeureResa_(v) {
+      if (v === null || v === undefined || v === '') return '-';
+      const t = String(v);
+      if (/^\d{1,2}:\d{2}/.test(t)) return t.slice(0, 5);
+      const d = new Date(t);
+      return isNaN(d.getTime()) ? t : d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    }
+    function fmtJour_(v) {
+      if (!v) return '-';
+      const d = new Date(v);
+      return isNaN(d.getTime()) ? String(v) : d.toLocaleDateString('fr-FR');
+    }
     function telephoneResaValide_(telephone) {
-      return /^555-\d{3}-\d{4}$/.test(telephone);
+      return /^555-\d{3}-\d{3,4}$/.test(telephone);
     }
     const RESA_NB_MAX = 8;
 
@@ -4800,7 +4817,7 @@
       document.getElementById('resa-nb').value = nb;
       const commentaire = document.getElementById('resa-commentaire').value.trim();
       if (!nom || !telephone || !date || !heure) { errEl.textContent = 'Nom, téléphone, date et heure sont obligatoires.'; return; }
-      if (!telephoneResaValide_(telephone)) { errEl.textContent = 'Le téléphone doit être au format 555-XXX-XXXX complet.'; return; }
+      if (!telephoneResaValide_(telephone)) { errEl.textContent = 'Le téléphone doit être au format 555-XXX-XXX ou 555-XXX-XXXX (3 ou 4 chiffres à la fin).'; return; }
       RESA_EN_COURS = true;
       const clientId = CURRENT_USER.ID; 
       google.script.run.withSuccessHandler(function () {
@@ -6967,11 +6984,12 @@
       errEl.textContent = '';
       document.getElementById('cc-mdp-revele').classList.add('hidden');
       if (!nom) { errEl.textContent = 'Le nom est obligatoire.'; return; }
+      if (telephone && telephone !== '555-' && !telephoneResaValide_(telephone)) { errEl.textContent = MSG_TELEPHONE_; return; }
       CC_CREATION_EN_COURS = true;
       google.script.run.withSuccessHandler(function (res) {
         CC_CREATION_EN_COURS = false;
         document.getElementById('cc-nom').value = ''; document.getElementById('cc-prenom').value = '';
-        document.getElementById('cc-telephone').value = ''; document.getElementById('cc-identifiant-apercu').textContent = '-';
+        document.getElementById('cc-telephone').value = '555-'; document.getElementById('cc-identifiant-apercu').textContent = '-';
         document.getElementById('cc-mdp-valeur').textContent = res.identifiant + '  /  ' + res.motdepasse;
         document.getElementById('cc-mdp-revele').classList.remove('hidden');
         showToast('Compte créé.');
@@ -7015,7 +7033,7 @@
           ? escapeHtml(r.Commentaire || '-') + '<div class="small" style="color:var(--red);margin-top:2px;">Refus : ' + escapeHtml(r.RaisonRefus) + '</div>'
           : escapeHtml(r.Commentaire || '-');
         const commandeAffichee = r.Commande ? '<div class="small" style="color:var(--gold);margin-top:4px;">Précommande : ' + escapeHtml(r.Commande) + (Number(r.TotalCommande) > 0 ? ' - ' + money(r.TotalCommande) : '') + '</div>' : '';
-        return `<tr><td class="kpi-gold" style="font-weight:700;">${escapeHtml(r.NumeroReservation || '-')}</td><td>${fmtDate(r.DateReservation)}</td><td>${escapeHtml(r.Heure)}</td><td>${escapeHtml(r.Nom)}</td><td class="small">${escapeHtml(r.Téléphone)}</td>
+        return `<tr><td class="kpi-gold" style="font-weight:700;">${escapeHtml(r.NumeroReservation || '-')}</td><td>${fmtJour_(r.DateReservation)}</td><td>${escapeHtml(fmtHeureResa_(r.Heure))}</td><td>${escapeHtml(r.Nom)}</td><td class="small">${escapeHtml(r.Téléphone)}</td>
           <td>${r.NbPersonnes}</td><td class="small">${commentaireAffiche}${commandeAffichee}</td><td class="${couleurStatut}" style="font-weight:600;">${escapeHtml(r.Statut)}</td>
           <td>${r.Statut !== 'Confirmée' ? `<a class="linklike" onclick="traiterReservationUI('${r.ID}','Confirmée')">Confirmer</a> ` : ''}${r.Statut !== 'Refusée' ? `<a class="linklike" onclick="traiterReservationUI('${r.ID}','Refusée')">Refuser</a> ` : `<a class="linklike" onclick="modifierRaisonRefusUI('${r.ID}')">Modifier la raison</a> `}<a class="linklike" onclick="supprimerReservationUI('${r.ID}')">Supprimer</a></td></tr>`;
       }).join('') || '<tr><td colspan="9" class="small">Aucune réservation ici.</td></tr>';
