@@ -493,11 +493,43 @@
     .carte-plat-desc { font-style: italic; font-size: 13px; color: var(--text-mute); margin-top: 4px; line-height: 1.5; }
     
     .carte-entete { text-align: center; margin-bottom: 28px; }
-    .carte-grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 28px; align-items: start; }
-    .carte-grille .carte-cadre { width: 100%; box-sizing: border-box; }
-    .carte-cat-titre { font-family: 'Playfair Display', Georgia, serif; font-weight: 800; font-size: 26px; color: var(--gold); letter-spacing: 3px; text-transform: uppercase; line-height: 1.2; }
-    .carte-cat-liste { margin-top: 6px; }
-    .carte-cat-liste .carte-plat:last-child { margin-bottom: 0; }
+    /* Grille des cartes : hauteur égale par rangée, dernière rangée centrée */
+    .carte-grille { display: flex; flex-wrap: wrap; justify-content: center; align-items: stretch; gap: 28px; }
+    #vitrine-page-carte .carte-grille .carte-cadre {
+      flex: 0 0 auto; width: calc((100% - 56px) / 3); max-width: none; margin: 0; box-sizing: border-box;
+      display: flex; flex-direction: column; padding: 34px 30px 30px;
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0) 45%);
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .carte-grille .carte-cadre:hover {
+      transform: translateY(-3px);
+      box-shadow: inset 0 0 0 6px var(--bg), inset 0 0 0 8px var(--gold), 0 10px 34px rgba(0,0,0,.45);
+    }
+    .carte-cat-tete { text-align: center; }
+    .carte-cat-badge {
+      width: 58px; height: 58px; margin: 0 auto 12px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 26px;
+      border: 1px solid var(--gold); background: rgba(255,255,255,.04);
+      box-shadow: 0 0 0 4px rgba(255,255,255,.03), 0 0 18px rgba(255,255,255,.05);
+    }
+    .carte-cat-titre { font-family: 'Playfair Display', Georgia, serif; font-weight: 800; font-size: 25px; color: var(--gold); letter-spacing: 4px; text-transform: uppercase; line-height: 1.2; }
+    .carte-cat-compte { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-mute); margin-top: 6px; opacity: .85; }
+    .carte-grille .carte-diviseur { margin: 16px 0 18px; }
+    .carte-cat-liste { flex: 1; text-align: left; }
+    .carte-grille .carte-plat { margin-bottom: 15px; }
+    .carte-grille .carte-plat:last-child { margin-bottom: 0; }
+    .carte-plat-ligne { display: flex; align-items: baseline; gap: 8px; }
+    .carte-plat-ligne .carte-plat-nom { font-size: 17px; line-height: 1.3; }
+    .carte-plat-points { flex: 1; min-width: 14px; border-bottom: 1px dotted var(--gold); opacity: .35; transform: translateY(-3px); }
+    .carte-plat-ligne .carte-plat-prix { margin-left: 0; font-size: 16px; font-weight: 700; white-space: nowrap; }
+    .carte-grille .carte-plat-desc { margin-top: 3px; font-size: 13px; padding-right: 36px; }
+    @media (max-width: 1100px) {
+      #vitrine-page-carte .carte-grille .carte-cadre { width: calc((100% - 28px) / 2); }
+    }
+    @media (max-width: 720px) {
+      #vitrine-page-carte .carte-grille .carte-cadre { width: 100%; padding: 28px 20px 24px; }
+      .carte-grille .carte-cadre:hover { transform: none; }
+    }
 
     .billet-carte { background: var(--bg-panel); padding: 32px 28px; text-align: center; border-bottom: 2px solid var(--gold); }
     
@@ -3784,13 +3816,19 @@
       document.getElementById('vitrine-menu').innerHTML = cartesVisibles.length
         ? cartesVisibles.map(c => `
             <div class="carte-cadre">
-              <div class="carte-couronne">${c.icone}</div>
-              <div class="carte-cat-titre">${escapeHtml(c.titre)}</div>
+              <div class="carte-cat-tete">
+                <div class="carte-cat-badge">${c.icone}</div>
+                <div class="carte-cat-titre">${escapeHtml(c.titre)}</div>
+                <div class="carte-cat-compte">${c.items.length} ${c.items.length > 1 ? 'créations' : 'création'}</div>
+              </div>
               <div class="carte-diviseur">◆</div>
               <div class="carte-cat-liste">
                 ${c.items.map(a => `
                   <div class="carte-plat">
-                    <div><span class="carte-plat-nom">${escapeHtml(a.Article)}</span>${afficherPrix ? '<span class="carte-plat-prix">' + money(a['Prix vente ($)']) + '</span>' : ''}</div>
+                    <div class="carte-plat-ligne">
+                      <span class="carte-plat-nom">${escapeHtml(a.Article)}</span>
+                      ${afficherPrix ? '<span class="carte-plat-points"></span><span class="carte-plat-prix">' + money(a['Prix vente ($)']) + '</span>' : ''}
+                    </div>
                     ${a.Notes ? '<div class="carte-plat-desc">' + escapeHtml(a.Notes) + '</div>' : ''}
                   </div>`).join('')}
               </div>
