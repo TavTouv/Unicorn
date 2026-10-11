@@ -727,6 +727,17 @@
     .vip-argent { --t1: #f4f6fb; --t2: #aab4cf; --t3: #7e8bab; --tglow: 205,214,238; }
     .vip-or { --t1: #fff1c2; --t2: #e0b955; --t3: #a97c1f; --tglow: 236,200,110; }
     .vip-diamant { --t1: #e3f8ff; --t2: #a8dcf5; --t3: #b69cf5; --tglow: 170,215,255; }
+    /* Ventes > VIP : cartes d'offres compactes (couleurs de grade) */
+    .vv-offre { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer;
+      border: 1px solid rgba(var(--tglow), .45); border-left: 4px solid var(--t2); background: rgba(var(--tglow), .06); transition: background .2s ease, box-shadow .2s ease, transform .2s ease; }
+    .vv-offre:hover { background: rgba(var(--tglow), .12); transform: translateX(2px); }
+    .vv-offre.vv-actif { background: rgba(var(--tglow), .17); box-shadow: 0 0 0 1px var(--t2), 0 0 22px rgba(var(--tglow), .2); }
+    .vv-grade { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--t2); }
+    .vv-nom { font-family: 'Playfair Display', Georgia, serif; font-weight: 800; font-size: 20px; letter-spacing: 1px;
+      background: linear-gradient(120deg, var(--t3), var(--t1) 45%, var(--t2) 70%, var(--t3)); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+    .vv-accroche { font-size: 12px; color: var(--text-mute); margin-top: 2px; font-style: italic; }
+    .vv-infos { text-align: right; white-space: nowrap; }
+    .vv-red { font-size: 20px; font-weight: 800; color: var(--t1); }
     .vip-carte > .carte-coin { width: 70px; height: 70px; }
     .vip-tete { padding-top: 6px; }
     .vip-medaille { width: 54px; height: 54px; margin: 0 auto 12px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--t1); border: 1px solid var(--t2); background: rgba(var(--tglow), .08); box-shadow: 0 0 0 4px rgba(255,255,255,.03), 0 0 22px rgba(var(--tglow), .25); }
@@ -1585,6 +1596,7 @@
           <button class="ms-sidebar-item" onclick="changerModeVente('normale', this, 'Desserts')">Desserts</button>
           <button class="ms-sidebar-item" onclick="changerModeVente('normale', this, 'Encas')">Encas</button>
           <button class="ms-sidebar-item hidden" id="ventes-btn-autres" onclick="changerModeVente('normale', this, 'Autres')">Autres</button>
+          <button class="ms-sidebar-item" onclick="changerModeVente('vip', this)">VIP</button>
           <button class="ms-sidebar-item" onclick="changerModeVente('export', this)">Export</button>
         </div>
         <div class="ms-content">
@@ -1648,6 +1660,35 @@
               <label class="mt10">Commentaire (obligatoire)</label>
               <textarea id="cart-cigares-comment" rows="2" placeholder="Ex: table 3..."></textarea>
               <button class="btn-primary btn-block" onclick="validerVenteCigares()">Valider la vente</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="ventes-mode-vip" class="hidden">
+          <div class="grid grid-2">
+            <div class="card">
+              <h2 style="margin:0 0 12px;">Offres VIP</h2>
+              <div id="ventes-vip-offres"></div>
+            </div>
+            <div class="card">
+              <h2 style="margin:0 0 6px;">Activer un VIP</h2>
+              <div class="small mb10" id="ventes-vip-choix">Choisis une offre à gauche.</div>
+              <label>Compte client</label>
+              <select id="ventes-vip-client"></select>
+              <label class="mt10">Commentaire <span class="small">(facultatif)</span></label>
+              <input id="ventes-vip-comment" placeholder="Ex: payé en main propre...">
+              <button class="btn-primary btn-block mt16" onclick="activerVipDepuisVentes()">Activer le VIP</button>
+              <div class="err" id="ventes-vip-err"></div>
+              <div class="small mt10">Si le client est déjà VIP, son abonnement est renouvelé avec l'offre choisie.</div>
+            </div>
+          </div>
+          <div class="card mt16">
+            <h2 style="margin:0 0 10px;">Membres VIP</h2>
+            <div style="overflow-x:auto;">
+              <table>
+                <thead><tr><th>Client</th><th>Offre</th><th>Expire le</th><th>Reste</th><th></th></tr></thead>
+                <tbody id="ventes-vip-membres"></tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -6189,11 +6230,114 @@
       document.getElementById('ventes-mode-normale').classList.toggle('hidden', mode !== 'normale');
       document.getElementById('ventes-mode-cigares').classList.toggle('hidden', mode !== 'cigares');
       document.getElementById('ventes-mode-export').classList.toggle('hidden', mode !== 'export');
+      document.getElementById('ventes-mode-vip').classList.toggle('hidden', mode !== 'vip');
       document.querySelectorAll('#ventes-mode-boutons button').forEach(b => b.classList.remove('active'));
       if (btnEl) btnEl.classList.add('active');
       if (mode === 'cigares') { renderCatalogueCigaresVente_(); renderCartCigaresUI(); chargerListeComptesClientsPourVentes_('cart-cigares-client'); }
       if (mode === 'normale') chargerListeComptesClientsPourVentes_('cart-client');
+      if (mode === 'vip') renderVentesVip_();
       if (mode === 'export') chargerListeComptesClientsPourVentes_('export-client');
+    }
+
+    // ===== Ventes > VIP : activer / renouveler un abonnement depuis la caisse =====
+    let VENTES_VIP_OFFRE = null;
+    function tierVip_(nom, idx) {
+      const n = String(nom || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      if (/diamond|diamant/.test(n)) return 'diamant';
+      if (/silver|argent/.test(n)) return 'argent';
+      if (/gold|\bor\b|dore/.test(n)) return 'or';
+      return ['argent', 'or', 'diamant'][Math.min(idx, 2)];
+    }
+    function renderVentesVip_() {
+      const offres = DATA.vipOffres || [];
+      if (!offres.some(o => o.ID === VENTES_VIP_OFFRE)) VENTES_VIP_OFFRE = offres.length ? offres[0].ID : null;
+      const ROMAINS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+      document.getElementById('ventes-vip-offres').innerHTML = offres.map((o, idx) => {
+        const tier = tierVip_(o.Nom, idx);
+        const accroche = String(o.Description || '').split(/\r?\n/).map(l => l.trim()).filter(l => l && !/^[*•\-]\s+/.test(l))[0] || '';
+        const red = Number(o.ReductionPourcent) || 0;
+        return `
+          <div class="vv-offre vip-${tier}${o.ID === VENTES_VIP_OFFRE ? ' vv-actif' : ''}" onclick="choisirOffreVipVentes_('${o.ID}')">
+            <div>
+              <div class="vv-grade">Grade ${ROMAINS[idx] || (idx + 1)}</div>
+              <div class="vv-nom">${escapeHtml(o.Nom)}</div>
+              ${accroche ? '<div class="vv-accroche">' + escapeHtml(accroche) + '</div>' : ''}
+            </div>
+            <div class="vv-infos">
+              ${red > 0 ? '<div class="vv-red">-' + red + ' %</div>' : ''}
+              <div class="small">${escapeHtml(String(o.DuréeJours))} jours${Number(o.Prix) > 0 ? ' · ' + money(o.Prix) : ''}</div>
+            </div>
+          </div>`;
+      }).join('') || '<div class="small">Aucune offre VIP. Crée-les dans Gestion client &gt; VIP.</div>';
+      const sel = offres.find(o => o.ID === VENTES_VIP_OFFRE);
+      document.getElementById('ventes-vip-choix').innerHTML = sel
+        ? 'Offre choisie : <b>' + escapeHtml(sel.Nom) + '</b>' + (Number(sel.ReductionPourcent) > 0 ? ' (-' + sel.ReductionPourcent + ' % sur la carte)' : '')
+        : 'Choisis une offre à gauche.';
+
+      const peuplerClients = function () {
+        const el = document.getElementById('ventes-vip-client');
+        const actuel = el.value;
+        el.innerHTML = '<option value="">Choisir un compte client...</option>' + (DATA.comptesClients || []).map(c =>
+          `<option value="${c.ID}">${escapeHtml((c.Prénom ? c.Prénom + ' ' : '') + c.Nom)}</option>`).join('');
+        if (actuel) el.value = actuel;
+      };
+      if (DATA.comptesClients) peuplerClients();
+      else google.script.run.withSuccessHandler(function (clients) { DATA.comptesClients = clients; peuplerClients(); })
+        .withFailureHandler(function () {}).getComptesClientsAvecVip();
+
+      const membres = DATA.vipMembres || [];
+      document.getElementById('ventes-vip-membres').innerHTML = membres.map(m => {
+        const d = formaterDecompteVip(m.DateExpiration);
+        return `<tr><td>${escapeHtml((m.Prénom ? m.Prénom + ' ' : '') + m.Nom)}</td><td>${escapeHtml(m.OffreNom || '-')}</td>
+          <td>${fmtDate(m.DateExpiration)}</td><td class="${d.classe}" style="font-weight:600;">${d.texte}</td>
+          <td><a class="linklike" onclick="renouvelerVipDepuisVentes_('${m.ID}')">Renouveler</a></td></tr>`;
+      }).join('') || '<tr><td colspan="5" class="small">Aucun membre VIP pour l\'instant.</td></tr>';
+    }
+    function choisirOffreVipVentes_(id) { VENTES_VIP_OFFRE = id; renderVentesVip_(); }
+    function activerVipDepuisVentes() {
+      const errEl = document.getElementById('ventes-vip-err');
+      errEl.textContent = '';
+      const clientId = document.getElementById('ventes-vip-client').value;
+      const comment = document.getElementById('ventes-vip-comment').value.trim();
+      const offre = (DATA.vipOffres || []).find(o => o.ID === VENTES_VIP_OFFRE);
+      if (!offre) { errEl.textContent = 'Choisis une offre VIP.'; return; }
+      if (!clientId) { errEl.textContent = 'Choisis un compte client.'; return; }
+      const client = (DATA.comptesClients || []).find(c => c.ID === clientId);
+      if (!client) { errEl.textContent = 'Compte client introuvable.'; return; }
+      const dejaMembre = (DATA.vipMembres || []).find(m => m.ClientID === clientId);
+      const terminer = function () {
+        document.getElementById('ventes-vip-comment').value = '';
+        renderVentesVip_();
+      };
+      if (dejaMembre) {
+        if (!confirm('Ce client est déjà VIP (' + (dejaMembre.OffreNom || '-') + '). Renouveler avec « ' + offre.Nom + ' » ?')) return;
+        google.script.run.withSuccessHandler(function (r) {
+          dejaMembre.DateExpiration = r.dateExpiration; dejaMembre.OffreID = offre.ID; dejaMembre.OffreNom = offre.Nom;
+          showToast('VIP renouvelé : ' + offre.Nom + '.');
+          terminer();
+        }).withFailureHandler(function (err) { errEl.textContent = err.message || String(err); })
+          .renouvelerVipMembre(dejaMembre.ID, offre.ID, CURRENT_USER.ID, CURRENT_USER['Nom RP']);
+        return;
+      }
+      google.script.run.withSuccessHandler(function (r) {
+        DATA.vipMembres = DATA.vipMembres || [];
+        DATA.vipMembres.push({ ID: r.id, Nom: client.Nom, Prénom: client.Prénom || '', OffreID: offre.ID, OffreNom: offre.Nom, DateDebut: new Date(), DateExpiration: r.dateExpiration, Commentaire: comment, AjouteParID: CURRENT_USER.ID, AjoutePar: CURRENT_USER['Nom RP'], ClientID: clientId });
+        showToast('VIP activé : ' + offre.Nom + '.');
+        terminer();
+      }).withFailureHandler(function (err) { errEl.textContent = err.message || String(err); })
+        .addVipMembre(client.Nom, client.Prénom || '', offre.ID, comment, CURRENT_USER.ID, CURRENT_USER['Nom RP'], clientId);
+    }
+    function renouvelerVipDepuisVentes_(id) {
+      const m = (DATA.vipMembres || []).find(x => x.ID === id);
+      if (!m) return;
+      const offre = (DATA.vipOffres || []).find(o => o.ID === VENTES_VIP_OFFRE) || (DATA.vipOffres || []).find(o => o.ID === m.OffreID);
+      if (!offre) return;
+      if (!confirm('Renouveler ' + m.Nom + ' avec « ' + offre.Nom + ' » ?')) return;
+      google.script.run.withSuccessHandler(function (r) {
+        m.DateExpiration = r.dateExpiration; m.OffreID = offre.ID; m.OffreNom = offre.Nom;
+        showToast('Membre renouvelé.');
+        renderVentesVip_();
+      }).withFailureHandler(onError).renouvelerVipMembre(id, offre.ID, CURRENT_USER.ID, CURRENT_USER['Nom RP']);
     }
 
     function renderVentesTable() {
