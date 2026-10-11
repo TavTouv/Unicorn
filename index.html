@@ -4405,10 +4405,17 @@
     }
     let RESA_MODE = 'creation';
     function chargerStatutReservationClient_() {
+      // Le formulaire et le bloc VIP s'affichent tout de suite : le chargement du statut ne doit jamais les bloquer.
+      DATA.statutReservation = DATA.statutReservation || null;
+      renderStatutReservation_();
       google.script.run.withSuccessHandler(function (statut) {
         DATA.statutReservation = statut;
         renderStatutReservation_();
-      }).withFailureHandler(function () {}).getStatutReservationClient(CURRENT_USER.sessionToken);
+      }).withFailureHandler(function (err) {
+        renderStatutReservation_();
+        const couponEl = document.getElementById('reserver-coupon');
+        if (couponEl) couponEl.insertAdjacentHTML('beforeend', '<div class="small" style="color:var(--red);margin-top:8px;">Statut de ta demande indisponible : ' + escapeHtml((err && err.message) || String(err)) + '</div>');
+      }).getStatutReservationClient(CURRENT_USER.sessionToken);
       chargerStatutVipClient_();
     }
     function renderStatutReservation_() {
@@ -4684,7 +4691,7 @@
     function chargerStatutVipClient_() {
       if (!CURRENT_USER || CURRENT_USER.typeCompte !== 'client') { DATA.statutVip = null; renderDemandeVipClient_(); return; }
       google.script.run.withSuccessHandler(function (st) { DATA.statutVip = st; renderDemandeVipClient_(); })
-        .withFailureHandler(function () {}).getStatutVipClient(CURRENT_USER.sessionToken);
+        .withFailureHandler(function () { renderDemandeVipClient_(); }).getStatutVipClient(CURRENT_USER.sessionToken);
     }
     function renderDemandeVipClient_() {
       const el = document.getElementById('reserver-vip');
@@ -4730,8 +4737,11 @@
       google.script.run.withSuccessHandler(function () {
         showToast('Demande VIP envoyée - on te répond au plus vite !');
         chargerStatutVipClient_();
-      }).withFailureHandler(function (err) { if (errEl) errEl.textContent = err.message || String(err); })
-        .demanderVip(VIP_RESA_OFFRE, '', CURRENT_USER.sessionToken);
+      }).withFailureHandler(function (err) {
+        const msg = (err && err.message) || String(err);
+        const e2 = document.getElementById('vip-resa-err');
+        if (e2) e2.textContent = /non autoris/i.test(msg) ? 'Le serveur n\'est pas à jour : le patron doit redéployer Code.gs (nouvelle version).' : msg;
+      }).demanderVip(VIP_RESA_OFFRE, '', CURRENT_USER.sessionToken);
     }
 
     function envoyerReservationUI() {
