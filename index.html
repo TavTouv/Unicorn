@@ -566,7 +566,6 @@
     .carte-boite-orn { position: absolute; left: 50%; width: 200px; height: 26px; transform: translateX(-50%); }
     .carte-boite-orn.haut { top: -13px; }
     .carte-boite-orn.bas { bottom: -13px; transform: translateX(-50%) scaleY(-1); }
-    .carte-cat-icone { font-size: 22px; line-height: 1; margin-bottom: 6px; }
     .carte-cat-titre {
       font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif; font-weight: 600; font-size: 38px;
       letter-spacing: 2px; text-transform: none; line-height: 1.1;
@@ -4213,22 +4212,22 @@
       });
       const normCat_ = t => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
       const CARTES = [
-        { titre: 'Cocktails', icone: '🍸', alias: ['cocktail', 'cocktails'] },
-        { titre: 'Alcools',   icone: '🥂', alias: ['alcool', 'alcools'] },
-        { titre: 'Soft',      icone: '🥤', alias: ['soft', 'softs'] },
-        { titre: 'Encas',     icone: '🧀', alias: ['encas', 'en-cas', 'en cas'] },
-        { titre: 'Entrées',   icone: '🥗', alias: ['entree', 'entrees'] },
-        { titre: 'Plats',     icone: '🍽️', alias: ['plat', 'plats'] },
-        { titre: 'Desserts',  icone: '🍰', alias: ['dessert', 'desserts'] }
+        { titre: 'Cocktails', alias: ['cocktail', 'cocktails'] },
+        { titre: 'Alcools',   alias: ['alcool', 'alcools'] },
+        { titre: 'Soft',      alias: ['soft', 'softs'] },
+        { titre: 'Encas',     alias: ['encas', 'en-cas', 'en cas'] },
+        { titre: 'Entrées',   alias: ['entree', 'entrees'] },
+        { titre: 'Plats',     alias: ['plat', 'plats'] },
+        { titre: 'Desserts',  alias: ['dessert', 'desserts'] }
       ];
-      const cartes = CARTES.map(c => ({ titre: c.titre, icone: c.icone, items: [] }));
+      const cartes = CARTES.map(c => ({ titre: c.titre, items: [] }));
       const autres = {};
       Object.keys(parCategorie).forEach(cat => {
         const idx = CARTES.findIndex(c => c.alias.indexOf(normCat_(cat)) !== -1);
         if (idx !== -1) cartes[idx].items = cartes[idx].items.concat(parCategorie[cat]);
         else autres[cat] = parCategorie[cat];
       });
-      Object.keys(autres).forEach(cat => cartes.push({ titre: cat, icone: '✦', items: autres[cat] }));
+      Object.keys(autres).forEach(cat => cartes.push({ titre: cat, items: autres[cat] }));
       const cartesVisibles = cartes.filter(c => c.items.length);
       document.getElementById('vitrine-menu').innerHTML = cartesVisibles.length
         ? cartesVisibles.map(c => `
@@ -4240,7 +4239,6 @@
               <div class="carte-cat-tete">
                 <div class="carte-cat-boite">
                   <svg class="carte-boite-orn haut" aria-hidden="true"><use href="#orn-haut"/></svg>
-                  <div class="carte-cat-icone">${c.icone}</div>
                   <div class="carte-cat-titre">${escapeHtml(c.titre)}</div>
                   <div class="carte-cat-compte">${c.items.length} ${c.items.length > 1 ? 'créations' : 'création'}</div>
                   <svg class="carte-boite-orn bas" aria-hidden="true"><use href="#orn-haut"/></svg>
